@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:projeto_mobile/widgets/login_widget.dart';
-import 'package:projeto_mobile/widgets/register_widget.dart';
+import 'package:flutter_task_list/views/register/register_widget.dart';
+import 'package:flutter_task_list/views/sign_in/sign_in_widget.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignInPage> createState() => _SignInPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignInPageState extends State<SignInPage> {
   bool login = true;
 
   changeScreen(bool state) {
@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         body: login
-            ? LoginWidget(changeScreen: changeScreen)
+            ? SignInWidget(changeScreen: changeScreen)
             : RegisterWidget(changeScreen: changeScreen));
   }
 }
