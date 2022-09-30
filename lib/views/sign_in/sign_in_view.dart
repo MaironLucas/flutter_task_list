@@ -27,9 +27,8 @@ class _SignInPageState extends State<SignInPage> {
           elevation: 0,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            // ignore: prefer_const_literals_to_create_immutables
-            children: [
-              const Icon(
+            children: const [
+              Icon(
                 Icons.wb_sunny,
                 color: Color.fromRGBO(49, 45, 84, 1),
               ),

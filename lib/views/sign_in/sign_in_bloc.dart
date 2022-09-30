@@ -44,14 +44,11 @@ class SignInBloc with SubscriptionHolder {
   final _onSubmitButtonClickSubject = BehaviorSubject<void>();
   Sink<void> get onSubmitButtonClick => _onSubmitButtonClickSubject.sink;
 
-  final _onEmailFocusLostSubject = BehaviorSubject<void>();
-  Sink<void> get onEmailFocusLost => _onEmailFocusLostSubject.sink;
-
-  final _onPasswordFocusLostSubject = BehaviorSubject<void>();
-  Sink<void> get onPasswordFocusLost => _onPasswordFocusLostSubject.sink;
-
   final _onSignInActionSubject = PublishSubject<SignInAction>();
   Stream<SignInAction> get onSignInAction => _onSignInActionSubject.stream;
+
+  final _onSubmitStatusSubject = PublishSubject<SubmitStatus>();
+  Stream<SubmitStatus> get onSubmitStatus => _onSubmitStatusSubject.stream;
 
   Stream<InputStatus> _validateEmail(String? email) async* {
     yield _userRepository.validateEmail(email);
@@ -64,9 +61,10 @@ class SignInBloc with SubscriptionHolder {
   Stream<SignInAction> _submitSignIn() async* {
     try {
       _userRepository.signInUser(_emailValue!, _passwordValue!);
+      _onSubmitStatusSubject.add(SubmitStatus.valid);
       yield SignInSuccessAction();
     } catch (e) {
-      yield SignInErrorAction();
+      _onSubmitStatusSubject.add(SubmitStatus.wrongCredentials);
     }
   }
 
@@ -76,7 +74,5 @@ class SignInBloc with SubscriptionHolder {
     _onPasswordValueChangedSubject.close();
     _onEmailValueChangedSubject.close();
     _onSubmitButtonClickSubject.close();
-    _onEmailFocusLostSubject.close();
-    _onPasswordFocusLostSubject.close();
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_task_list/views/common/view_utils.dart';
 
 class TslFormField extends StatelessWidget {
-  TslFormField({
+  const TslFormField({
     required this.hintText,
     required this.textController,
     required this.onChanged,
@@ -21,17 +21,63 @@ class TslFormField extends StatelessWidget {
       stream: statusStream,
       builder: (context, snapshot) {
         final status = snapshot.data;
-        print(status);
+
+        String? errorText =
+            (status == InputStatus.invalid || status == InputStatus.empty)
+                ? ''
+                : null;
+
         return TextFormField(
-          style: TextStyle(fontSize: 12),
-          cursorColor: Color.fromRGBO(49, 45, 84, 1),
+          cursorColor: const Color.fromRGBO(49, 45, 84, 1),
           controller: textController,
           onChanged: onChanged,
-          decoration: InputDecoration.collapsed(
-            hintText: 'Email',
-            hintStyle: TextStyle(
+          decoration: InputDecoration(
+            errorText: errorText,
+            errorStyle: const TextStyle(
               fontSize: 12,
-              color: Colors.grey,
+              color: Colors.red,
+            ),
+            hintText: hintText,
+            contentPadding: const EdgeInsets.only(
+              left: 20,
+              top: 15,
+              bottom: 15,
+            ),
+            enabledBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+              borderSide: BorderSide(
+                color: Colors.blueGrey,
+                width: 1.0,
+              ),
+            ),
+            focusedBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+              borderSide: BorderSide(
+                color: Colors.blue,
+                width: 1.0,
+              ),
+            ),
+            errorBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+              borderSide: BorderSide(
+                color: Colors.red,
+                width: 1.0,
+              ),
+            ),
+            focusedErrorBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              ),
+              borderSide: BorderSide(
+                color: Colors.red,
+                width: 1.0,
+              ),
             ),
           ),
         );

@@ -1,23 +1,13 @@
-abstract class SignInState{}
+abstract class SignInAction {}
 
-class SignInSuccess implements SignInState{}
+class SignInSuccessAction extends SignInAction {}
 
-class SignInError implements SignInState{}
+abstract class ButtonState {}
 
-class SignInLoading implements SignInState{}
+class ButtonLoading implements ButtonState {}
 
+class ButtonActive implements ButtonState {}
 
-abstract class SignInAction{}
+class ButtonInactive implements ButtonState {}
 
-class SignInSuccessAction extends SignInAction{}
-
-class SignInErrorAction extends SignInAction {}
-
-
-abstract class ButtonState{}
-
-class ButtonLoading implements ButtonState{}
-
-class ButtonActive implements ButtonState{}
- 
-class ButtonInactive implements ButtonState{}
+enum SubmitStatus { valid, wrongCredentials }
