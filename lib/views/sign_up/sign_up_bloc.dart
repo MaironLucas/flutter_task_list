@@ -1,11 +1,16 @@
 import 'package:flutter_task_list/common/subscription_holder.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/common/view_utils.dart';
-import 'package:flutter_task_list/views/sign_in/sign_in_models.dart';
+import 'package:flutter_task_list/views/sign_up/sign_up_models.dart';
 import 'package:rxdart/rxdart.dart';
 
-class SignInBloc with SubscriptionHolder {
-  SignInBloc() {
+class SignUpBloc with SubscriptionHolder {
+  SignUpBloc() {
+    _onNameValueChangedSubject
+        .flatMap(_validateName)
+        .listen(_onNameInputStatusChangedSubject.add)
+        .addTo(subscriptions);
+
     _onEmailValueChangedSubject
         .flatMap(_validateEmail)
         .listen(_onEmailInputStatusChangedSubject.add)
@@ -16,17 +21,27 @@ class SignInBloc with SubscriptionHolder {
         .listen(_onPasswordInputStatusChangedSubject.add)
         .addTo(subscriptions);
 
+    _onPasswordConfirmationValueChangedSubject
+        .flatMap(_validatePassword)
+        .listen(_onPasswordConfirmationInputStatusChangedSubject.add)
+        .addTo(subscriptions);
+
     _onSubmitButtonClickSubject
-        .flatMap((_) => _submitSignIn())
+        .flatMap((_) => _submitSignUp())
         .listen(_onSignInActionSubject.add)
         .addTo(subscriptions);
 
-    Rx.combineLatest2(
+    Rx.combineLatest4(
+      _onNameInputStatusChangedSubject,
       _onEmailInputStatusChangedSubject,
       _onPasswordInputStatusChangedSubject,
-      (emailStatus, passwordStatus) {
-        if (emailStatus == InputStatus.valid &&
-            passwordStatus == InputStatus.valid) {
+      _onPasswordConfirmationInputStatusChangedSubject,
+      (nameStatus, emailStatus, passwordStatus, passwordConfirmationStatus) {
+        if (nameStatus == InputStatus.valid &&
+            emailStatus == InputStatus.valid &&
+            passwordStatus == InputStatus.valid &&
+            passwordConfirmationStatus == InputStatus.valid &&
+            _passwordValue == _passwordConfirmationValue) {
           return ButtonActive();
         }
         return ButtonInactive();
@@ -44,6 +59,14 @@ class SignInBloc with SubscriptionHolder {
   Stream<InputStatus> get onEmailInputStatusChangedStream =>
       _onEmailInputStatusChangedSubject.stream;
 
+  final _onNameValueChangedSubject = BehaviorSubject<String>();
+  Sink<String?> get onNameValueChanged => _onNameValueChangedSubject.sink;
+  String? get _nameValue => _onNameValueChangedSubject.valueOrNull;
+
+  final _onNameInputStatusChangedSubject = BehaviorSubject<InputStatus>();
+  Stream<InputStatus> get onNameInputStatusChangedStream =>
+      _onNameInputStatusChangedSubject.stream;
+
   final _onPasswordValueChangedSubject = BehaviorSubject<String>();
   Sink<String?> get onPasswordValueChanged =>
       _onPasswordValueChangedSubject.sink;
@@ -53,11 +76,22 @@ class SignInBloc with SubscriptionHolder {
   Stream<InputStatus> get onPasswordInputStatusChanged =>
       _onPasswordInputStatusChangedSubject.stream;
 
+  final _onPasswordConfirmationValueChangedSubject = BehaviorSubject<String>();
+  Sink<String?> get onPasswordConfirmationValueChanged =>
+      _onPasswordConfirmationValueChangedSubject.sink;
+  String? get _passwordConfirmationValue =>
+      _onPasswordConfirmationValueChangedSubject.valueOrNull;
+
+  final _onPasswordConfirmationInputStatusChangedSubject =
+      BehaviorSubject<InputStatus>();
+  Stream<InputStatus> get onPasswordConfirmationInputStatusChanged =>
+      _onPasswordConfirmationInputStatusChangedSubject.stream;
+
   final _onSubmitButtonClickSubject = BehaviorSubject<void>();
   Sink<void> get onSubmitButtonClick => _onSubmitButtonClickSubject.sink;
 
-  final _onSignInActionSubject = PublishSubject<SignInAction>();
-  Stream<SignInAction> get onSignInAction => _onSignInActionSubject.stream;
+  final _onSignInActionSubject = PublishSubject<SignUpAction>();
+  Stream<SignUpAction> get onSignInAction => _onSignInActionSubject.stream;
 
   final _onSubmitStatusSubject = PublishSubject<SubmitStatus>();
   Stream<SubmitStatus> get onSubmitStatus => _onSubmitStatusSubject.stream;
@@ -65,6 +99,10 @@ class SignInBloc with SubscriptionHolder {
   final _onButtonStatusChangedSubject = PublishSubject<ButtonState>();
   Stream<ButtonState> get onButtonStatusChanged =>
       _onButtonStatusChangedSubject.stream;
+
+  Stream<InputStatus> _validateName(String? name) async* {
+    yield _userRepository.validateName(name);
+  }
 
   Stream<InputStatus> _validateEmail(String? email) async* {
     yield _userRepository.validateEmail(email);
@@ -74,15 +112,15 @@ class SignInBloc with SubscriptionHolder {
     yield _userRepository.validatePassword(password);
   }
 
-  Stream<SignInAction> _submitSignIn() async* {
+  Stream<SignUpAction> _submitSignUp() async* {
     try {
       _onButtonStatusChangedSubject.add(ButtonLoading());
-      _userRepository.signInUser(_emailValue!, _passwordValue!);
+      _userRepository.signUpUser(_nameValue!, _emailValue!, _passwordValue!);
       _onSubmitStatusSubject.add(SubmitStatus.valid);
-      yield SignInSuccessAction();
+      yield SignUpSuccessAction();
     } catch (e) {
       _onButtonStatusChangedSubject.add(ButtonInactive());
-      _onSubmitStatusSubject.add(SubmitStatus.wrongCredentials);
+      _onSubmitStatusSubject.add(SubmitStatus.invalidPassword);
     }
   }
 

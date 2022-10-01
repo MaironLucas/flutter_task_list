@@ -25,7 +25,18 @@ class UserRepository {
     return InputStatus.valid;
   }
 
+  InputStatus validateName(String? name) {
+    if (name == null) {
+      return InputStatus.empty;
+    }
+    return InputStatus.valid;
+  }
+
   void signInUser(String email, String password) {
     userRds.loginUser(email, password);
+  }
+
+  void signUpUser(String name, String email, String password) {
+    userRds.signUpUser(name, email, password);
   }
 }

@@ -111,7 +111,7 @@ class _SignInWidgetState extends State<SignInWidget> {
                               widget.changeScreen(false);
                             },
                             child: const Text(
-                              'Create Account',
+                              'Sign Up',
                               style:
                                   TextStyle(color: Colors.blue, fontSize: 12),
                             ),
@@ -128,28 +128,50 @@ class _SignInWidgetState extends State<SignInWidget> {
                       Row(
                         children: [
                           Expanded(
-                            child: TextButton(
-                              onPressed: () =>
-                                  bloc.onSubmitButtonClick.add(null),
-                              style: ButtonStyle(
-                                  minimumSize: MaterialStateProperty.all<Size>(
-                                      const Size(1000, 60)),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50),
+                            child: StreamBuilder<ButtonState>(
+                                stream: bloc.onButtonStatusChanged,
+                                builder: (context, snapshot) {
+                                  final buttonStatus =
+                                      snapshot.data ?? ButtonInactive();
+
+                                  if (buttonStatus is ButtonLoading) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  return TextButton(
+                                    onPressed: () =>
+                                        buttonStatus is ButtonActive
+                                            ? bloc.onSubmitButtonClick.add(null)
+                                            : null,
+                                    style: ButtonStyle(
+                                      minimumSize:
+                                          MaterialStateProperty.all<Size>(
+                                              const Size(1000, 60)),
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                        ),
+                                      ),
+                                      backgroundColor: buttonStatus
+                                              is ButtonActive
+                                          ? MaterialStateProperty.all<Color>(
+                                              Colors.indigoAccent,
+                                            )
+                                          : MaterialStateProperty.all<Color>(
+                                              Colors.blueGrey,
+                                            ),
                                     ),
-                                  ),
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Colors.indigoAccent)),
-                              child: const Text(
-                                "Sign In",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
+                                    child: const Text(
+                                      "Sign In",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  );
+                                }),
                           ),
                         ],
                       ),

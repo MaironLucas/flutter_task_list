@@ -27,56 +27,63 @@ class TslFormField extends StatelessWidget {
                 ? ''
                 : null;
 
-        return TextFormField(
-          cursorColor: const Color.fromRGBO(49, 45, 84, 1),
-          controller: textController,
-          onChanged: onChanged,
-          decoration: InputDecoration(
-            errorText: errorText,
-            errorStyle: const TextStyle(
-              fontSize: 12,
-              color: Colors.red,
-            ),
-            hintText: hintText,
-            contentPadding: const EdgeInsets.only(
-              left: 20,
-              top: 15,
-              bottom: 15,
-            ),
-            enabledBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8),
-              ),
-              borderSide: BorderSide(
-                color: Colors.blueGrey,
-                width: 1.0,
-              ),
-            ),
-            focusedBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8),
-              ),
-              borderSide: BorderSide(
-                color: Colors.blue,
-                width: 1.0,
-              ),
-            ),
-            errorBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8),
-              ),
-              borderSide: BorderSide(
+        return Container(
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(30)),
+            color: Color.fromRGBO(217, 217, 217, 1),
+          ),
+          height: 60,
+          child: TextFormField(
+            cursorColor: const Color.fromRGBO(49, 45, 84, 1),
+            controller: textController,
+            onChanged: onChanged,
+            decoration: InputDecoration(
+              errorText: errorText,
+              errorStyle: const TextStyle(
+                fontSize: 12,
                 color: Colors.red,
-                width: 1.0,
               ),
-            ),
-            focusedErrorBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(8),
+              hintText: hintText,
+              contentPadding: const EdgeInsets.only(
+                left: 20,
+                top: 15,
+                bottom: 15,
               ),
-              borderSide: BorderSide(
-                color: Colors.red,
-                width: 1.0,
+              enabledBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(30),
+                ),
+                borderSide: BorderSide(
+                  color: Colors.blueGrey,
+                  width: 1.0,
+                ),
+              ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(30),
+                ),
+                borderSide: BorderSide(
+                  color: Colors.blue,
+                  width: 1.0,
+                ),
+              ),
+              errorBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(30),
+                ),
+                borderSide: BorderSide(
+                  color: Colors.red,
+                  width: 1.0,
+                ),
+              ),
+              focusedErrorBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(30),
+                ),
+                borderSide: BorderSide(
+                  color: Colors.red,
+                  width: 1.0,
+                ),
               ),
             ),
           ),
