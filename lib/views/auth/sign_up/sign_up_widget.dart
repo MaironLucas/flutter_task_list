@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_task_list/views/common/tsl_form_field.dart';
-import 'package:flutter_task_list/views/sign_up/sign_up_bloc.dart';
-import 'package:flutter_task_list/views/sign_up/sign_up_models.dart';
+import 'package:flutter_task_list/views/auth/sign_up/sign_up_bloc.dart';
+import 'package:flutter_task_list/views/auth/sign_up/sign_up_models.dart';
 
-class SignUp extends StatelessWidget {
+class SignUpWidget extends StatelessWidget {
   final Function(bool parameters) changeScreen;
-  SignUp({super.key, required this.changeScreen});
+  SignUpWidget({super.key, required this.changeScreen});
 
   final bloc = SignUpBloc();
 
   @override
   Widget build(BuildContext context) {
-    final _nameController = TextEditingController();
-    final _emailController = TextEditingController();
-    final _passwordController = TextEditingController();
-    final _passwordConfirmationController = TextEditingController();
+    final nameController = TextEditingController();
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+    final passwordConfirmationController = TextEditingController();
 
-    final _signUpFormKey = GlobalKey<FormState>();
+    final signUpFormKey = GlobalKey<FormState>();
 
     return Container(
       color: Colors.white,
       child: Padding(
         padding:
-            const EdgeInsets.only(left: 30.0, right: 30, bottom: 40, top: 100),
+            const EdgeInsets.only(left: 30.0, right: 30, bottom: 40, top: 0),
         child: Column(
           children: [
             const SizedBox(
@@ -42,7 +42,7 @@ class SignUp extends StatelessWidget {
             SizedBox(
               height: 400,
               child: Form(
-                key: _signUpFormKey,
+                key: signUpFormKey,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 20.0, right: 20),
                   child: Column(
@@ -50,7 +50,7 @@ class SignUp extends StatelessWidget {
                     children: [
                       TslFormField(
                         hintText: 'Full Name',
-                        textController: _nameController,
+                        textController: nameController,
                         onChanged: (name) => bloc.onNameValueChanged.add(name),
                         statusStream: bloc.onNameInputStatusChangedStream,
                       ),
@@ -59,7 +59,7 @@ class SignUp extends StatelessWidget {
                       ),
                       TslFormField(
                         hintText: 'Email',
-                        textController: _emailController,
+                        textController: emailController,
                         onChanged: (email) =>
                             bloc.onEmailValueChanged.add(email),
                         statusStream: bloc.onEmailInputStatusChangedStream,
@@ -69,7 +69,7 @@ class SignUp extends StatelessWidget {
                       ),
                       TslFormField(
                         hintText: 'Password',
-                        textController: _passwordController,
+                        textController: passwordController,
                         onChanged: (password) =>
                             bloc.onPasswordValueChanged.add(password),
                         statusStream: bloc.onPasswordInputStatusChanged,
@@ -79,7 +79,7 @@ class SignUp extends StatelessWidget {
                       ),
                       TslFormField(
                         hintText: 'Password Confirmation',
-                        textController: _passwordConfirmationController,
+                        textController: passwordConfirmationController,
                         onChanged: (password) => bloc
                             .onPasswordConfirmationValueChanged
                             .add(password),

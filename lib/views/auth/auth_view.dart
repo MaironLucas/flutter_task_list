@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_task_list/views/sign_in/sign_in_widget.dart';
-import 'package:flutter_task_list/views/sign_up/sign_up.dart';
+import 'package:flutter_task_list/views/auth/sign_in/sign_in_widget.dart';
+import 'package:flutter_task_list/views/auth/sign_up/sign_up_widget.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -37,6 +37,6 @@ class _SignInPageState extends State<SignInPage> {
         ),
         body: login
             ? SignInWidget(changeScreen: changeScreen)
-            : SignUp(changeScreen: changeScreen));
+            : SignUpWidget(changeScreen: changeScreen));
   }
 }
