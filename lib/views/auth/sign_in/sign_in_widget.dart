@@ -41,12 +41,13 @@ class _SignInWidgetState extends State<SignInWidget> {
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(bottom: 60.0),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 60.0),
               child: SizedBox(
                 child: Center(
                   child: Text(
                     "Welcome Back !",
+                    style: Theme.of(context).textTheme.headline1,
                   ),
                 ),
               ),

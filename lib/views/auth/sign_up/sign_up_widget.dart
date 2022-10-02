@@ -38,8 +38,9 @@ class SignUpWidget extends StatelessWidget {
                 child: Column(
                   // ignore: prefer_const_literals_to_create_immutables
                   children: [
-                    const Text(
+                    Text(
                       "Welcome Onboard !",
+                      style: Theme.of(context).textTheme.headline1,
                     ),
                     const Text(
                       "Let's help you to meet your task.",

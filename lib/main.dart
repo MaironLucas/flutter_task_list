@@ -27,8 +27,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Task List',
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
+      theme: light,
+      darkTheme: dark,
       themeMode: currentTheme.currentTheme(),
       home: const SignInPage(),
     );
