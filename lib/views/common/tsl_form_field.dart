@@ -27,45 +27,34 @@ class TslFormField extends StatelessWidget {
                 ? ''
                 : null;
 
-        return Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(30)),
-            color: Color.fromRGBO(217, 217, 217, 1),
-          ),
-          height: 60,
+        return SizedBox(
+          height: 90,
           child: TextFormField(
             cursorColor: const Color.fromRGBO(49, 45, 84, 1),
             controller: textController,
             onChanged: onChanged,
+            style: const TextStyle(fontSize: 13, color: Colors.black),
             decoration: InputDecoration(
+              filled: true,
+              fillColor: const Color.fromRGBO(217, 217, 217, 1),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(50),
+                borderSide: const BorderSide(
+                  width: 0,
+                  style: BorderStyle.none,
+                ),
+              ),
               errorText: errorText,
               errorStyle: const TextStyle(
                 fontSize: 12,
                 color: Colors.red,
               ),
               hintText: hintText,
+              hintStyle: const TextStyle(fontSize: 13),
               contentPadding: const EdgeInsets.only(
                 left: 20,
-                top: 15,
-                bottom: 15,
-              ),
-              enabledBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(30),
-                ),
-                borderSide: BorderSide(
-                  color: Colors.blueGrey,
-                  width: 1.0,
-                ),
-              ),
-              focusedBorder: const OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(30),
-                ),
-                borderSide: BorderSide(
-                  color: Colors.blue,
-                  width: 1.0,
-                ),
+                top: 20,
+                bottom: 20,
               ),
               errorBorder: const OutlineInputBorder(
                 borderRadius: BorderRadius.all(

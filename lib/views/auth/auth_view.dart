@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/config.dart';
 import 'package:flutter_task_list/views/auth/sign_in/sign_in_widget.dart';
 import 'package:flutter_task_list/views/auth/sign_up/sign_up_widget.dart';
 
@@ -21,22 +22,26 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           elevation: 0,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: const [
-              Icon(
-                Icons.wb_sunny,
-                color: Color.fromRGBO(49, 45, 84, 1),
-              ),
+            children: [
+              IconButton(
+                onPressed: () => currentTheme.switchTheme(),
+                icon: const Icon(
+                  Icons.wb_sunny,
+                  color: Color.fromRGBO(217, 217, 217, 1),
+                ),
+              )
             ],
           ),
         ),
-        body: login
-            ? SignInWidget(changeScreen: changeScreen)
-            : SignUpWidget(changeScreen: changeScreen));
+        body: SingleChildScrollView(
+          child: login
+              ? SignInWidget(changeScreen: changeScreen)
+              : SignUpWidget(changeScreen: changeScreen),
+        ));
   }
 }

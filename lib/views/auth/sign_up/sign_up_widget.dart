@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/tsl_form_field.dart';
 import 'package:flutter_task_list/views/auth/sign_up/sign_up_bloc.dart';
 import 'package:flutter_task_list/views/auth/sign_up/sign_up_models.dart';
@@ -18,24 +19,32 @@ class SignUpWidget extends StatelessWidget {
 
     final signUpFormKey = GlobalKey<FormState>();
 
-    return Container(
-      color: Colors.white,
+    return ActionHandler(
+      actionStream: bloc.onSignUpAction,
+      onReceived: (action) {
+        if (action is SignUpSuccessAction) {
+          //! rota para home
+        }
+      },
       child: Padding(
         padding:
-            const EdgeInsets.only(left: 30.0, right: 30, bottom: 40, top: 0),
+            const EdgeInsets.only(left: 30.0, right: 30, bottom: 40, top: 20),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const SizedBox(
-              child: Center(
-                child: Text(
-                  "Welcome Onboard !",
-                ),
-              ),
-            ),
-            const SizedBox(
-              child: Center(
-                child: Text(
-                  "Let's help you meet your task.",
+            SizedBox(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 7.5),
+                child: Column(
+                  // ignore: prefer_const_literals_to_create_immutables
+                  children: [
+                    const Text(
+                      "Welcome Onboard !",
+                    ),
+                    const Text(
+                      "Let's help you to meet your task.",
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -54,9 +63,9 @@ class SignUpWidget extends StatelessWidget {
                         onChanged: (name) => bloc.onNameValueChanged.add(name),
                         statusStream: bloc.onNameInputStatusChangedStream,
                       ),
-                      const SizedBox(
-                        height: 30,
-                      ),
+                      // const SizedBox(
+                      //   height: 30,
+                      // ),
                       TslFormField(
                         hintText: 'Email',
                         textController: emailController,
@@ -64,9 +73,9 @@ class SignUpWidget extends StatelessWidget {
                             bloc.onEmailValueChanged.add(email),
                         statusStream: bloc.onEmailInputStatusChangedStream,
                       ),
-                      const SizedBox(
-                        height: 30,
-                      ),
+                      // const SizedBox(
+                      //   height: 30,
+                      // ),
                       TslFormField(
                         hintText: 'Password',
                         textController: passwordController,
@@ -74,9 +83,9 @@ class SignUpWidget extends StatelessWidget {
                             bloc.onPasswordValueChanged.add(password),
                         statusStream: bloc.onPasswordInputStatusChanged,
                       ),
-                      const SizedBox(
-                        height: 30,
-                      ),
+                      // const SizedBox(
+                      //   height: 30,
+                      // ),
                       TslFormField(
                         hintText: 'Password Confirmation',
                         textController: passwordConfirmationController,
@@ -91,78 +100,76 @@ class SignUpWidget extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded(
-              child: SizedBox(
-                height: 200,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Already have an account? ",
-                            style: TextStyle(color: Colors.grey, fontSize: 12)),
-                        InkWell(
-                          onTap: () {
-                            changeScreen(true);
-                          },
-                          child: const Text(
-                            'Sign In',
-                            style: TextStyle(color: Colors.blue, fontSize: 12),
-                          ),
+            SizedBox(
+              height: 105,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Already have an account? ",
+                          style: TextStyle(color: Colors.grey, fontSize: 12)),
+                      InkWell(
+                        onTap: () {
+                          changeScreen(true);
+                        },
+                        child: const Text(
+                          'Sign In',
+                          style: TextStyle(color: Colors.blue, fontSize: 12),
                         ),
-                      ],
-                    ),
-                    const Divider(
-                      height: 30,
-                      thickness: 1,
-                      indent: 20,
-                      endIndent: 20,
-                      color: Color.fromRGBO(217, 217, 217, 0.4),
-                    ),
-                    Row(
-                      children: [
-                        StreamBuilder<ButtonState>(
-                          stream: bloc.onButtonStatusChanged,
-                          builder: (context, snapshot) {
-                            final buttonStatus =
-                                snapshot.data ?? ButtonInactive();
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    height: 30,
+                    thickness: 1,
+                    indent: 20,
+                    endIndent: 20,
+                    color: Color.fromRGBO(217, 217, 217, 0.4),
+                  ),
+                  Row(
+                    children: [
+                      StreamBuilder<ButtonState>(
+                        stream: bloc.onButtonStatusChanged,
+                        builder: (context, snapshot) {
+                          final buttonStatus =
+                              snapshot.data ?? ButtonInactive();
 
-                            return Expanded(
-                              child: TextButton(
-                                onPressed: () => buttonStatus is ButtonActive
-                                    ? bloc.onSubmitButtonClick.add(null)
-                                    : null,
-                                style: ButtonStyle(
-                                  minimumSize: MaterialStateProperty.all<Size>(
-                                      const Size(1000, 60)),
-                                  shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(50))),
-                                  backgroundColor: buttonStatus is ButtonActive
-                                      ? MaterialStateProperty.all<Color>(
-                                          Colors.indigoAccent,
-                                        )
-                                      : MaterialStateProperty.all<Color>(
-                                          Colors.blueGrey,
-                                        ),
-                                ),
-                                child: const Text(
-                                  "Register",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
+                          return Expanded(
+                            child: TextButton(
+                              onPressed: () => buttonStatus is ButtonActive
+                                  ? bloc.onSubmitButtonClick.add(null)
+                                  : null,
+                              style: ButtonStyle(
+                                minimumSize: MaterialStateProperty.all<Size>(
+                                    const Size(1000, 60)),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(50))),
+                                backgroundColor: buttonStatus is ButtonActive
+                                    ? MaterialStateProperty.all<Color>(
+                                        Colors.indigoAccent,
+                                      )
+                                    : MaterialStateProperty.all<Color>(
+                                        Colors.blueGrey,
+                                      ),
+                              ),
+                              child: const Text(
+                                "Register",
+                                style: TextStyle(
+                                  color: Colors.white,
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],

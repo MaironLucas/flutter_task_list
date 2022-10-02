@@ -91,7 +91,7 @@ class SignUpBloc with SubscriptionHolder {
   Sink<void> get onSubmitButtonClick => _onSubmitButtonClickSubject.sink;
 
   final _onSignInActionSubject = PublishSubject<SignUpAction>();
-  Stream<SignUpAction> get onSignInAction => _onSignInActionSubject.stream;
+  Stream<SignUpAction> get onSignUpAction => _onSignInActionSubject.stream;
 
   final _onSubmitStatusSubject = PublishSubject<SubmitStatus>();
   Stream<SubmitStatus> get onSubmitStatus => _onSubmitStatusSubject.stream;
