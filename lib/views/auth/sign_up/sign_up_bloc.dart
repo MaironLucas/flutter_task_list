@@ -5,7 +5,7 @@ import 'package:flutter_task_list/views/auth/sign_up/sign_up_models.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SignUpBloc with SubscriptionHolder {
-  SignUpBloc() {
+  SignUpBloc({required this.userRepository}) {
     _onNameValueChangedSubject
         .flatMap(_validateName)
         .listen(_onNameInputStatusChangedSubject.add)
@@ -49,7 +49,7 @@ class SignUpBloc with SubscriptionHolder {
     ).listen(_onButtonStatusChangedSubject.add).addTo(subscriptions);
   }
 
-  final _userRepository = UserRepository();
+  final UserRepository userRepository;
 
   final _onEmailValueChangedSubject = BehaviorSubject<String>();
   Sink<String?> get onEmailValueChanged => _onEmailValueChangedSubject.sink;
@@ -101,21 +101,21 @@ class SignUpBloc with SubscriptionHolder {
       _onButtonStatusChangedSubject.stream;
 
   Stream<InputStatus> _validateName(String? name) async* {
-    yield _userRepository.validateName(name);
+    yield userRepository.validateName(name);
   }
 
   Stream<InputStatus> _validateEmail(String? email) async* {
-    yield _userRepository.validateEmail(email);
+    yield userRepository.validateEmail(email);
   }
 
   Stream<InputStatus> _validatePassword(String? password) async* {
-    yield _userRepository.validatePassword(password);
+    yield userRepository.validatePassword(password);
   }
 
   Stream<SignUpAction> _submitSignUp() async* {
     try {
       _onButtonStatusChangedSubject.add(ButtonLoading());
-      _userRepository.signUpUser(_nameValue!, _emailValue!, _passwordValue!);
+      userRepository.signUpUser(_nameValue!, _emailValue!, _passwordValue!);
       _onSubmitStatusSubject.add(SubmitStatus.valid);
       yield SignUpSuccessAction();
     } catch (e) {

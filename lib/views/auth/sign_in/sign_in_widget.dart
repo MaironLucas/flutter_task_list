@@ -1,18 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/tsl_form_field.dart';
 import 'package:flutter_task_list/views/auth/sign_in/sign_in_bloc.dart';
 import 'package:flutter_task_list/views/auth/sign_in/sign_in_models.dart';
+import 'package:provider/provider.dart';
 
 class SignInWidget extends StatefulWidget {
   final Function(bool parameters) changeScreen;
 
-  final bloc = SignInBloc();
+  final SignInBloc bloc;
 
-  SignInWidget({
+  const SignInWidget({
     super.key,
     required this.changeScreen,
+    required this.bloc,
   });
+
+  static Widget create(Function(bool parameters) changeScreen) =>
+      ProxyProvider<UserRepository, SignInBloc>(
+        update: (_, userRepository, __) => SignInBloc(
+          userRepository: userRepository,
+        ),
+        dispose: (_, bloc) => bloc.dispose(),
+        child: Consumer<SignInBloc>(
+          builder: (_, bloc, __) => SignInWidget(
+            bloc: bloc,
+            changeScreen: changeScreen,
+          ),
+        ),
+      );
 
   @override
   State<SignInWidget> createState() => _SignInWidgetState();

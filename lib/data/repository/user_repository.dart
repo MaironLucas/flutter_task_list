@@ -2,7 +2,9 @@ import 'package:flutter_task_list/data/remote/data_source/user_rds.dart';
 import 'package:flutter_task_list/views/common/view_utils.dart';
 
 class UserRepository {
-  final userRds = UserRds();
+  UserRepository({required this.userRds});
+
+  final UserRds userRds;
 
   static const regexEmail =
       r'^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$';

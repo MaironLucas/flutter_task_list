@@ -1,14 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/tsl_form_field.dart';
 import 'package:flutter_task_list/views/auth/sign_up/sign_up_bloc.dart';
 import 'package:flutter_task_list/views/auth/sign_up/sign_up_models.dart';
+import 'package:provider/provider.dart';
 
 class SignUpWidget extends StatelessWidget {
   final Function(bool parameters) changeScreen;
-  SignUpWidget({super.key, required this.changeScreen});
+  final SignUpBloc bloc;
 
-  final bloc = SignUpBloc();
+  const SignUpWidget({
+    super.key,
+    required this.changeScreen,
+    required this.bloc,
+  });
+
+  static Widget create(Function(bool parameters) changeScreen) =>
+      ProxyProvider<UserRepository, SignUpBloc>(
+        update: (_, userRepository, __) => SignUpBloc(
+          userRepository: userRepository,
+        ),
+        dispose: (_, bloc) => bloc.dispose(),
+        child: Consumer<SignUpBloc>(
+          builder: (_, bloc, __) => SignUpWidget(
+            changeScreen: changeScreen,
+            bloc: bloc,
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {

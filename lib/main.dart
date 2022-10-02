@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_task_list/config.dart';
-import 'package:flutter_task_list/views/auth/auth_view.dart';
+import 'package:flutter_task_list/main_container_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,7 +30,7 @@ class _MyAppState extends State<MyApp> {
       theme: light,
       darkTheme: dark,
       themeMode: currentTheme.currentTheme(),
-      home: const SignInPage(),
+      home: const MainContainerScreen(),
     );
   }
 }
