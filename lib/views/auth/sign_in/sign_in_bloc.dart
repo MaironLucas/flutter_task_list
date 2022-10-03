@@ -1,11 +1,16 @@
 import 'package:flutter_task_list/common/subscription_holder.dart';
+import 'package:flutter_task_list/data/dummy_state_handler.dart';
+import 'package:flutter_task_list/data/model/user.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/common/view_utils.dart';
 import 'package:flutter_task_list/views/auth/sign_in/sign_in_models.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SignInBloc with SubscriptionHolder {
-  SignInBloc({required this.userRepository}) {
+  SignInBloc({
+    required this.userRepository,
+    required this.dummyStateHandler,
+  }) {
     _onEmailValueChangedSubject
         .flatMap(_validateEmail)
         .listen(_onEmailInputStatusChangedSubject.add)
@@ -35,6 +40,7 @@ class SignInBloc with SubscriptionHolder {
   }
 
   final UserRepository userRepository;
+  final DummyStateHandler dummyStateHandler;
 
   final _onEmailValueChangedSubject = BehaviorSubject<String>();
   Sink<String?> get onEmailValueChanged => _onEmailValueChangedSubject.sink;
@@ -79,6 +85,9 @@ class SignInBloc with SubscriptionHolder {
       _onButtonStatusChangedSubject.add(ButtonLoading());
       userRepository.signInUser(_emailValue!, _passwordValue!);
       _onSubmitStatusSubject.add(SubmitStatus.valid);
+      dummyStateHandler.logInUser(
+        User(name: 'Teste', email: 'email.com'),
+      );
       yield SignInSuccessAction();
     } catch (e) {
       _onButtonStatusChangedSubject.add(ButtonInactive());

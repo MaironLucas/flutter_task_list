@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/data/dummy_state_handler.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/tsl_form_field.dart';
@@ -18,9 +19,10 @@ class SignInWidget extends StatefulWidget {
   });
 
   static Widget create(Function(bool parameters) changeScreen) =>
-      ProxyProvider<UserRepository, SignInBloc>(
-        update: (_, userRepository, __) => SignInBloc(
+      ProxyProvider2<UserRepository, DummyStateHandler, SignInBloc>(
+        update: (_, userRepository, dummyState, __) => SignInBloc(
           userRepository: userRepository,
+          dummyStateHandler: dummyState,
         ),
         dispose: (_, bloc) => bloc.dispose(),
         child: Consumer<SignInBloc>(
