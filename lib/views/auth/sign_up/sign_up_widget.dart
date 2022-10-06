@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
+import 'package:flutter_task_list/views/auth/auth_view.dart';
 import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/tsl_form_field.dart';
 import 'package:flutter_task_list/views/auth/sign_up/sign_up_bloc.dart';
 import 'package:flutter_task_list/views/auth/sign_up/sign_up_models.dart';
+import 'package:flutter_task_list/views/common/view_utils.dart';
 import 'package:provider/provider.dart';
 
 class SignUpWidget extends StatelessWidget {
@@ -43,7 +45,8 @@ class SignUpWidget extends StatelessWidget {
       actionStream: bloc.onSignUpAction,
       onReceived: (action) {
         if (action is SignUpSuccessAction) {
-          //! rota para home
+          displaySnackBar(context, 'User created successfully');
+          changeScreen(true);
         }
       },
       child: Padding(
@@ -56,7 +59,6 @@ class SignUpWidget extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 7.5),
                 child: Column(
-                  // ignore: prefer_const_literals_to_create_immutables
                   children: [
                     Text(
                       "Welcome Onboard !",
@@ -68,6 +70,29 @@ class SignUpWidget extends StatelessWidget {
                   ],
                 ),
               ),
+            ),
+            StreamBuilder<SubmitStatus>(
+              stream: bloc.onSubmitStatus,
+              builder: (context, snapshot) {
+                final submitStatus = snapshot.data ?? SubmitStatus.valid;
+                String message;
+                switch (submitStatus) {
+                  case SubmitStatus.emailAlreadyUsed:
+                    message = 'Given email is already used!';
+                    break;
+                  default:
+                    message = ' ';
+                }
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 30.0),
+                  child: Text(
+                    message,
+                    style: const TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
+                );
+              },
             ),
             SizedBox(
               height: 400,

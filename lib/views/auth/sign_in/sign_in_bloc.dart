@@ -1,6 +1,6 @@
+import 'package:flutter_task_list/common/exceptions.dart';
 import 'package:flutter_task_list/common/subscription_holder.dart';
 import 'package:flutter_task_list/data/dummy_state_handler.dart';
-import 'package:flutter_task_list/data/model/user.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/common/view_utils.dart';
 import 'package:flutter_task_list/views/auth/sign_in/sign_in_models.dart';
@@ -11,15 +11,23 @@ class SignInBloc with SubscriptionHolder {
     required this.userRepository,
     required this.dummyStateHandler,
   }) {
-    _onEmailValueChangedSubject
-        .flatMap(_validateEmail)
-        .listen(_onEmailInputStatusChangedSubject.add)
-        .addTo(subscriptions);
+    _onEmailValueChangedSubject.flatMap(_validateEmail).listen((emailStatus) {
+      final lastPasswordStatus = _onEmailInputStatusChangedSubject.valueOrNull;
+      if (lastPasswordStatus == InputStatus.error) {
+        _onPasswordInputStatusChangedSubject.add(InputStatus.valid);
+      }
+      _onEmailInputStatusChangedSubject.add(emailStatus);
+    }).addTo(subscriptions);
 
     _onPasswordValueChangedSubject
         .flatMap(_validatePassword)
-        .listen(_onPasswordInputStatusChangedSubject.add)
-        .addTo(subscriptions);
+        .listen((passwordStatus) {
+      final lastEmailStatus = _onPasswordInputStatusChangedSubject.valueOrNull;
+      if (lastEmailStatus == InputStatus.error) {
+        _onEmailInputStatusChangedSubject.add(InputStatus.valid);
+      }
+      _onPasswordInputStatusChangedSubject.add(passwordStatus);
+    }).addTo(subscriptions);
 
     _onSubmitButtonClickSubject
         .flatMap((_) => _submitSignIn())
@@ -73,10 +81,12 @@ class SignInBloc with SubscriptionHolder {
       _onButtonStatusChangedSubject.stream;
 
   Stream<InputStatus> _validateEmail(String? email) async* {
+    _onSubmitStatusSubject.add(SubmitStatus.valid);
     yield userRepository.validateEmail(email);
   }
 
   Stream<InputStatus> _validatePassword(String? password) async* {
+    _onSubmitStatusSubject.add(SubmitStatus.valid);
     yield userRepository.validatePassword(password);
   }
 
@@ -85,12 +95,11 @@ class SignInBloc with SubscriptionHolder {
       _onButtonStatusChangedSubject.add(ButtonLoading());
       userRepository.signInUser(_emailValue!, _passwordValue!);
       _onSubmitStatusSubject.add(SubmitStatus.valid);
-      dummyStateHandler.logInUser(
-        User(name: 'Teste', email: 'email.com'),
-      );
       yield SignInSuccessAction();
     } catch (e) {
       _onButtonStatusChangedSubject.add(ButtonInactive());
+      _onEmailInputStatusChangedSubject.add(InputStatus.error);
+      _onPasswordInputStatusChangedSubject.add(InputStatus.error);
       _onSubmitStatusSubject.add(SubmitStatus.wrongCredentials);
     }
   }

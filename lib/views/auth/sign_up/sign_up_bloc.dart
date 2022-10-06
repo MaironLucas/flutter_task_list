@@ -7,22 +7,34 @@ import 'package:rxdart/rxdart.dart';
 class SignUpBloc with SubscriptionHolder {
   SignUpBloc({required this.userRepository}) {
     _onNameValueChangedSubject
-        .flatMap(_validateName)
+        .flatMap((name) {
+          _putValidOnStreams();
+          return _validateName(name);
+        })
         .listen(_onNameInputStatusChangedSubject.add)
         .addTo(subscriptions);
 
     _onEmailValueChangedSubject
-        .flatMap(_validateEmail)
+        .flatMap((email) {
+          _putValidOnStreams();
+          return _validateEmail(email);
+        })
         .listen(_onEmailInputStatusChangedSubject.add)
         .addTo(subscriptions);
 
     _onPasswordValueChangedSubject
-        .flatMap(_validatePassword)
+        .flatMap((password) {
+          _putValidOnStreams();
+          return _validatePassword(password);
+        })
         .listen(_onPasswordInputStatusChangedSubject.add)
         .addTo(subscriptions);
 
     _onPasswordConfirmationValueChangedSubject
-        .flatMap(_validatePassword)
+        .flatMap((passwordConfirmation) {
+          _putValidOnStreams();
+          return _validateConfirmationPassword(passwordConfirmation);
+        })
         .listen(_onPasswordConfirmationInputStatusChangedSubject.add)
         .addTo(subscriptions);
 
@@ -40,8 +52,7 @@ class SignUpBloc with SubscriptionHolder {
         if (nameStatus == InputStatus.valid &&
             emailStatus == InputStatus.valid &&
             passwordStatus == InputStatus.valid &&
-            passwordConfirmationStatus == InputStatus.valid &&
-            _passwordValue == _passwordConfirmationValue) {
+            passwordConfirmationStatus == InputStatus.valid) {
           return ButtonActive();
         }
         return ButtonInactive();
@@ -79,8 +90,6 @@ class SignUpBloc with SubscriptionHolder {
   final _onPasswordConfirmationValueChangedSubject = BehaviorSubject<String>();
   Sink<String?> get onPasswordConfirmationValueChanged =>
       _onPasswordConfirmationValueChangedSubject.sink;
-  String? get _passwordConfirmationValue =>
-      _onPasswordConfirmationValueChangedSubject.valueOrNull;
 
   final _onPasswordConfirmationInputStatusChangedSubject =
       BehaviorSubject<InputStatus>();
@@ -93,7 +102,7 @@ class SignUpBloc with SubscriptionHolder {
   final _onSignInActionSubject = PublishSubject<SignUpAction>();
   Stream<SignUpAction> get onSignUpAction => _onSignInActionSubject.stream;
 
-  final _onSubmitStatusSubject = PublishSubject<SubmitStatus>();
+  final _onSubmitStatusSubject = BehaviorSubject<SubmitStatus>();
   Stream<SubmitStatus> get onSubmitStatus => _onSubmitStatusSubject.stream;
 
   final _onButtonStatusChangedSubject = PublishSubject<ButtonState>();
@@ -101,15 +110,41 @@ class SignUpBloc with SubscriptionHolder {
       _onButtonStatusChangedSubject.stream;
 
   Stream<InputStatus> _validateName(String? name) async* {
+    _onSubmitStatusSubject.add(SubmitStatus.valid);
     yield userRepository.validateName(name);
   }
 
   Stream<InputStatus> _validateEmail(String? email) async* {
+    _onSubmitStatusSubject.add(SubmitStatus.valid);
     yield userRepository.validateEmail(email);
   }
 
   Stream<InputStatus> _validatePassword(String? password) async* {
+    _onSubmitStatusSubject.add(SubmitStatus.valid);
     yield userRepository.validatePassword(password);
+  }
+
+  Stream<InputStatus> _validateConfirmationPassword(
+      String? confirmationPassword) async* {
+    if (confirmationPassword == _passwordValue) {
+      yield InputStatus.valid;
+    } else {
+      yield InputStatus.invalid;
+    }
+  }
+
+  void _putValidOnStreams() {
+    if (/*_onEmailInputStatusChangedSubject.valueOrNull == InputStatus.error ||
+        _onNameInputStatusChangedSubject.valueOrNull == InputStatus.error ||
+        _onPasswordInputStatusChangedSubject.valueOrNull == InputStatus.error ||
+        _onPasswordConfirmationInputStatusChangedSubject.valueOrNull ==
+            InputStatus.error*/
+        _onSubmitStatusSubject.valueOrNull == SubmitStatus.emailAlreadyUsed) {
+      _onEmailInputStatusChangedSubject.add(InputStatus.valid);
+      _onNameInputStatusChangedSubject.add(InputStatus.valid);
+      _onPasswordInputStatusChangedSubject.add(InputStatus.valid);
+      _onPasswordConfirmationInputStatusChangedSubject.add(InputStatus.valid);
+    }
   }
 
   Stream<SignUpAction> _submitSignUp() async* {
@@ -120,7 +155,11 @@ class SignUpBloc with SubscriptionHolder {
       yield SignUpSuccessAction();
     } catch (e) {
       _onButtonStatusChangedSubject.add(ButtonInactive());
-      _onSubmitStatusSubject.add(SubmitStatus.invalidPassword);
+      _onEmailInputStatusChangedSubject.add(InputStatus.error);
+      _onNameInputStatusChangedSubject.add(InputStatus.error);
+      _onPasswordInputStatusChangedSubject.add(InputStatus.error);
+      _onPasswordConfirmationInputStatusChangedSubject.add(InputStatus.error);
+      _onSubmitStatusSubject.add(SubmitStatus.emailAlreadyUsed);
     }
   }
 

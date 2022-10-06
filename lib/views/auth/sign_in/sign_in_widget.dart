@@ -5,6 +5,7 @@ import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/tsl_form_field.dart';
 import 'package:flutter_task_list/views/auth/sign_in/sign_in_bloc.dart';
 import 'package:flutter_task_list/views/auth/sign_in/sign_in_models.dart';
+import 'package:flutter_task_list/views/home/home_view.dart';
 import 'package:provider/provider.dart';
 
 class SignInWidget extends StatefulWidget {
@@ -51,14 +52,18 @@ class _SignInWidgetState extends State<SignInWidget> {
       actionStream: bloc.onSignInAction,
       onReceived: (action) {
         if (action is SignInSuccessAction) {
-          //! rota para home
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomePage(),
+            ),
+          );
         }
       },
       child: Padding(
         padding:
             const EdgeInsets.only(left: 30.0, right: 30, bottom: 40, top: 100),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 60.0),
@@ -72,25 +77,28 @@ class _SignInWidgetState extends State<SignInWidget> {
               ),
             ),
             StreamBuilder<SubmitStatus>(
-                stream: bloc.onSubmitStatus,
-                builder: (context, snapshot) {
-                  final submitStatus = snapshot.data;
-                  if (submitStatus == SubmitStatus.wrongCredentials) {
-                    return const Padding(
-                      padding: EdgeInsets.only(bottom: 30.0),
-                      child: Text(
-                        'Email ou senha inválidos!',
-                        style: TextStyle(
-                          color: Colors.red,
-                        ),
-                      ),
-                    );
-                  }
-                  return const Padding(
-                    padding: EdgeInsets.only(bottom: 30.0),
-                    child: Text(""),
-                  );
-                }),
+              stream: bloc.onSubmitStatus,
+              builder: (context, snapshot) {
+                final submitStatus = snapshot.data ?? SubmitStatus.valid;
+                String message;
+                switch (submitStatus) {
+                  case SubmitStatus.wrongCredentials:
+                    message = 'Invalid email or password!';
+                    break;
+                  default:
+                    message = ' ';
+                }
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 30.0),
+                  child: Text(
+                    message,
+                    style: const TextStyle(
+                      color: Colors.red,
+                    ),
+                  ),
+                );
+              },
+            ),
             SizedBox(
               height: 190,
               child: Padding(
@@ -102,6 +110,8 @@ class _SignInWidgetState extends State<SignInWidget> {
                     children: [
                       TslFormField(
                         hintText: 'Email',
+                        emptyFormMessage: 'Email field is required',
+                        invalidFormMessage: 'Given email is invalid',
                         textController: _emailController,
                         onChanged: (email) =>
                             bloc.onEmailValueChanged.add(email),
@@ -110,6 +120,7 @@ class _SignInWidgetState extends State<SignInWidget> {
                       // Expanded(child: Container()),
                       TslFormField(
                         hintText: 'Password',
+                        emptyFormMessage: 'Password field is required',
                         textController: _passwordController,
                         onChanged: (password) =>
                             bloc.onPasswordValueChanged.add(password),

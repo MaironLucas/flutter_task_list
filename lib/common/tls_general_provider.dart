@@ -16,16 +16,18 @@ class TslGeneralProvider extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MultiProvider(
         providers: [
+          ...changeNotifiersProviders(),
           ...rdsProviders(),
           ...repositoryProviders(),
-          ...changeNotifiersProviders(),
         ],
         child: child,
       );
 
   List<SingleChildWidget> rdsProviders() => [
-        Provider<UserRds>(
-          create: (_) => UserRds(),
+        ProxyProvider<DummyStateHandler, UserRds>(
+          update: (_, dummyStateHandler, userRds) => UserRds(
+            dummyStateHandler: dummyStateHandler,
+          ),
         ),
       ];
 

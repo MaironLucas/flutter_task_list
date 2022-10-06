@@ -1,11 +1,13 @@
-import 'package:flutter_task_list/common/exceptions.dart';
+import 'package:flutter_task_list/data/dummy_state_handler.dart';
 
 class UserRds {
-  void loginUser(String email, String password) {
-    if (!(email == 'teste@email.com' && password == 'senha12')) {
-      throw WrongCredentialsException;
-    }
-  }
+  UserRds({required this.dummyStateHandler});
 
-  void signUpUser(String name, String email, String password) {}
+  final DummyStateHandler dummyStateHandler;
+
+  void loginUser(String email, String password) =>
+      dummyStateHandler.logInUser(email, password);
+
+  void signUpUser(String name, String email, String password) =>
+      dummyStateHandler.signUpUser(email, password, name);
 }

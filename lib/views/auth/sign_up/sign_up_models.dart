@@ -10,4 +10,4 @@ class ButtonActive implements ButtonState {}
 
 class ButtonInactive implements ButtonState {}
 
-enum SubmitStatus { valid, invalidEmail, invalidPassword, passwordDoesntMatch }
+enum SubmitStatus { valid, passwordDoesntMatch, emailAlreadyUsed }
