@@ -25,6 +25,8 @@ class SignUpBloc with SubscriptionHolder {
     _onPasswordValueChangedSubject
         .flatMap((password) {
           _putValidOnStreams();
+          _onPasswordConfirmationValueChangedSubject
+              .add(_passwordConfirmationValue ?? '');
           return _validatePassword(password);
         })
         .listen(_onPasswordInputStatusChangedSubject.add)
@@ -90,6 +92,8 @@ class SignUpBloc with SubscriptionHolder {
   final _onPasswordConfirmationValueChangedSubject = BehaviorSubject<String>();
   Sink<String?> get onPasswordConfirmationValueChanged =>
       _onPasswordConfirmationValueChangedSubject.sink;
+  String? get _passwordConfirmationValue =>
+      _onPasswordConfirmationValueChangedSubject.valueOrNull;
 
   final _onPasswordConfirmationInputStatusChangedSubject =
       BehaviorSubject<InputStatus>();

@@ -105,35 +105,34 @@ class SignUpWidget extends StatelessWidget {
                     children: [
                       TslFormField(
                         hintText: 'Full Name',
+                        emptyFormMessage: 'Field name is necessary!',
+                        invalidFormMessage: 'Given name is invalid!',
                         textController: nameController,
                         onChanged: (name) => bloc.onNameValueChanged.add(name),
                         statusStream: bloc.onNameInputStatusChangedStream,
                       ),
-                      // const SizedBox(
-                      //   height: 30,
-                      // ),
                       TslFormField(
                         hintText: 'Email',
+                        emptyFormMessage: 'Field email is necessary!',
+                        invalidFormMessage: 'Given email is invalid!',
                         textController: emailController,
                         onChanged: (email) =>
                             bloc.onEmailValueChanged.add(email),
                         statusStream: bloc.onEmailInputStatusChangedStream,
                       ),
-                      // const SizedBox(
-                      //   height: 30,
-                      // ),
                       TslFormField(
                         hintText: 'Password',
+                        emptyFormMessage: 'Field password is necessary!',
+                        invalidFormMessage: 'Given password is invalid!',
                         textController: passwordController,
                         onChanged: (password) =>
                             bloc.onPasswordValueChanged.add(password),
                         statusStream: bloc.onPasswordInputStatusChanged,
                       ),
-                      // const SizedBox(
-                      //   height: 30,
-                      // ),
                       TslFormField(
                         hintText: 'Password Confirmation',
+                        emptyFormMessage: 'Please, confirm password!',
+                        invalidFormMessage: 'Passwords doesnt match!',
                         textController: passwordConfirmationController,
                         onChanged: (password) => bloc
                             .onPasswordConfirmationValueChanged
