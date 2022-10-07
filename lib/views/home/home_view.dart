@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/views/list/lists_page.dart';
+import 'package:flutter_task_list/views/settings/settings_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,13 +12,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-    ),
-    Text(
-      'Index 1: Menu',
-    ),
+  final List<Widget> _widgetOptions = const <Widget>[
+    ListsPage(),
+    SettingsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -30,39 +28,41 @@ class _HomePageState extends State<HomePage> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              // ignore: prefer_const_literals_to_create_immutables
-              children: [
-                const Icon(
-                  Icons.wb_sunny,
-                  color: Color.fromRGBO(49, 45, 84, 1),
-                ),
-              ],
-            ),
-          ),
-          body: Center(
-            child: _widgetOptions.elementAt(_selectedIndex),
-          ),
-          bottomNavigationBar: BottomNavigationBar(
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: '',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.menu),
-                label: '',
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            // ignore: prefer_const_literals_to_create_immutables
+            children: [
+              const Icon(
+                Icons.wb_sunny,
+                color: Color.fromRGBO(49, 45, 84, 1),
               ),
             ],
-            selectedItemColor: Colors.indigoAccent,
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-          )),
+          ),
+        ),
+        body: Center(
+          child: _widgetOptions[_selectedIndex],
+        ),
+        bottomNavigationBar: NavigationBar(
+          destinations: const <NavigationDestination>[
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.settings_outlined),
+              selectedIcon: Icon(Icons.settings),
+              label: 'Settings',
+            ),
+          ],
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: _onItemTapped,
+        ),
+      ),
     );
   }
 }

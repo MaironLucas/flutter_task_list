@@ -1,4 +1,3 @@
-import 'package:flutter_task_list/common/exceptions.dart';
 import 'package:flutter_task_list/common/subscription_holder.dart';
 import 'package:flutter_task_list/data/dummy_state_handler.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';

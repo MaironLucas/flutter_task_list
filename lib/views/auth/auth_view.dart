@@ -21,27 +21,30 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            IconButton(
-              onPressed: () => currentTheme.switchTheme(),
-              icon: const Icon(
-                Icons.wb_sunny,
-                color: Color.fromRGBO(217, 217, 217, 1),
-              ),
-            )
-          ],
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                onPressed: () => currentTheme.switchTheme(),
+                icon: const Icon(
+                  Icons.wb_sunny,
+                  color: Color.fromRGBO(217, 217, 217, 1),
+                ),
+              )
+            ],
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: login
-            ? SignInWidget.create(changeScreen)
-            : SignUpWidget.create(changeScreen),
+        body: SingleChildScrollView(
+          child: login
+              ? SignInWidget.create(changeScreen)
+              : SignUpWidget.create(changeScreen),
+        ),
       ),
     );
   }

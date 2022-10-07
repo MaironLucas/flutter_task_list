@@ -5,7 +5,13 @@ import 'package:flutter_task_list/data/model/user_log_in_data.dart';
 
 class DummyStateHandler with ChangeNotifier {
   User? _loggedUser;
-  final List<UserLoginData> _users = [];
+  final List<UserLoginData> _users = [
+    UserLoginData(
+      password: 'senha12',
+      name: 'Teste',
+      email: 'teste@email.com',
+    ),
+  ];
 
   void signUpUser(String email, String password, String name) {
     for (var user in _users) {

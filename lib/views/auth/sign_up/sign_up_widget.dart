@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
-import 'package:flutter_task_list/views/auth/auth_view.dart';
 import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/tsl_form_field.dart';
 import 'package:flutter_task_list/views/auth/sign_up/sign_up_bloc.dart';

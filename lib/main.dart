@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/common/tls_general_provider.dart';
 import 'package:flutter_task_list/config.dart';
 import 'package:flutter_task_list/main_container_screen.dart';
 
@@ -24,13 +25,15 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Task List',
-      theme: light,
-      darkTheme: dark,
-      themeMode: currentTheme.currentTheme(),
-      home: const MainContainerScreen(),
+    return TslGeneralProvider(
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Task List',
+        theme: light,
+        darkTheme: dark,
+        themeMode: currentTheme.currentTheme(),
+        home: const MainContainerScreen(),
+      ),
     );
   }
 }
