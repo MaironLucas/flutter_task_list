@@ -1,3 +1,4 @@
+import 'package:flutter_task_list/common/exceptions.dart';
 import 'package:flutter_task_list/common/subscription_holder.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/common/view_utils.dart';
@@ -7,24 +8,17 @@ import 'package:rxdart/rxdart.dart';
 class SignUpBloc with SubscriptionHolder {
   SignUpBloc({required this.userRepository}) {
     _onNameValueChangedSubject
-        .flatMap((name) {
-          _putValidOnStreams();
-          return _validateName(name);
-        })
+        .flatMap(_validateName)
         .listen(_onNameInputStatusChangedSubject.add)
         .addTo(subscriptions);
 
     _onEmailValueChangedSubject
-        .flatMap((email) {
-          _putValidOnStreams();
-          return _validateEmail(email);
-        })
+        .flatMap(_validateEmail)
         .listen(_onEmailInputStatusChangedSubject.add)
         .addTo(subscriptions);
 
     _onPasswordValueChangedSubject
         .flatMap((password) {
-          _putValidOnStreams();
           _onPasswordConfirmationValueChangedSubject
               .add(_passwordConfirmationValue ?? '');
           return _validatePassword(password);
@@ -33,10 +27,7 @@ class SignUpBloc with SubscriptionHolder {
         .addTo(subscriptions);
 
     _onPasswordConfirmationValueChangedSubject
-        .flatMap((passwordConfirmation) {
-          _putValidOnStreams();
-          return _validateConfirmationPassword(passwordConfirmation);
-        })
+        .flatMap(_validateConfirmationPassword)
         .listen(_onPasswordConfirmationInputStatusChangedSubject.add)
         .addTo(subscriptions);
 
@@ -137,33 +128,26 @@ class SignUpBloc with SubscriptionHolder {
     }
   }
 
-  void _putValidOnStreams() {
-    if (/*_onEmailInputStatusChangedSubject.valueOrNull == InputStatus.error ||
-        _onNameInputStatusChangedSubject.valueOrNull == InputStatus.error ||
-        _onPasswordInputStatusChangedSubject.valueOrNull == InputStatus.error ||
-        _onPasswordConfirmationInputStatusChangedSubject.valueOrNull ==
-            InputStatus.error*/
-        _onSubmitStatusSubject.valueOrNull == SubmitStatus.emailAlreadyUsed) {
-      _onEmailInputStatusChangedSubject.add(InputStatus.valid);
-      _onNameInputStatusChangedSubject.add(InputStatus.valid);
-      _onPasswordInputStatusChangedSubject.add(InputStatus.valid);
-      _onPasswordConfirmationInputStatusChangedSubject.add(InputStatus.valid);
-    }
-  }
-
   Stream<SignUpAction> _submitSignUp() async* {
     try {
       _onButtonStatusChangedSubject.add(ButtonLoading());
-      userRepository.signUpUser(_nameValue!, _emailValue!, _passwordValue!);
+      await userRepository.signUpUser(
+          _nameValue!, _emailValue!, _passwordValue!);
       _onSubmitStatusSubject.add(SubmitStatus.valid);
       yield SignUpSuccessAction();
-    } catch (e) {
+    } catch (error) {
       _onButtonStatusChangedSubject.add(ButtonInactive());
-      _onEmailInputStatusChangedSubject.add(InputStatus.error);
-      _onNameInputStatusChangedSubject.add(InputStatus.error);
-      _onPasswordInputStatusChangedSubject.add(InputStatus.error);
-      _onPasswordConfirmationInputStatusChangedSubject.add(InputStatus.error);
-      _onSubmitStatusSubject.add(SubmitStatus.emailAlreadyUsed);
+      if (error is EmailAlreadyUsedException) {
+        _onEmailInputStatusChangedSubject.add(InputStatus.error);
+        _onSubmitStatusSubject.add(SubmitStatus.emailAlreadyUsed);
+      } else if (error is WeakPasswordException) {
+        _onPasswordInputStatusChangedSubject.add(InputStatus.error);
+        _onPasswordConfirmationInputStatusChangedSubject.add(InputStatus.error);
+        _onSubmitStatusSubject.add(SubmitStatus.weakPassword);
+      } else {
+        _onSubmitStatusSubject.add(SubmitStatus.invalid);
+        _onButtonStatusChangedSubject.add(ButtonActive());
+      }
     }
   }
 

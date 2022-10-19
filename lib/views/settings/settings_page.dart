@@ -1,7 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_task_list/data/dummy_state_handler.dart';
 import 'package:flutter_task_list/views/auth/auth_view.dart';
-import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -13,7 +12,7 @@ class SettingsPage extends StatelessWidget {
     return Material(
       child: TextButton(
         onPressed: () {
-          Provider.of<DummyStateHandler>(context, listen: false).signOut();
+          FirebaseAuth.instance.signOut();
           Navigator.push(
             context,
             MaterialPageRoute(

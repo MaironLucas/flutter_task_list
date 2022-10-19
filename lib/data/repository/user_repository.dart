@@ -34,11 +34,9 @@ class UserRepository {
     return InputStatus.valid;
   }
 
-  void signInUser(String email, String password) {
-    userRds.loginUser(email, password);
-  }
+  Future<void> signInUser(String email, String password) =>
+      userRds.signInUser(email, password);
 
-  void signUpUser(String name, String email, String password) {
-    userRds.signUpUser(name, email, password);
-  }
+  Future<void> signUpUser(String name, String email, String password) =>
+      userRds.signUpUser(name, email, password);
 }

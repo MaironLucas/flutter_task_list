@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_task_list/data/dummy_state_handler.dart';
+import 'package:flutter_task_list/data/login_state_handler.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/tsl_form_field.dart';
@@ -20,7 +20,7 @@ class SignInWidget extends StatefulWidget {
   });
 
   static Widget create(Function(bool parameters) changeScreen) =>
-      ProxyProvider2<UserRepository, DummyStateHandler, SignInBloc>(
+      ProxyProvider2<UserRepository, LoginStateHandler, SignInBloc>(
         update: (_, userRepository, dummyState, __) => SignInBloc(
           userRepository: userRepository,
           dummyStateHandler: dummyState,
@@ -84,6 +84,9 @@ class _SignInWidgetState extends State<SignInWidget> {
                 switch (submitStatus) {
                   case SubmitStatus.wrongCredentials:
                     message = 'Invalid email or password!';
+                    break;
+                  case SubmitStatus.invalid:
+                    message = 'Some internal error occured. Try again!';
                     break;
                   default:
                     message = ' ';

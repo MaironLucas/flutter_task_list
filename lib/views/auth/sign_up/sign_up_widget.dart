@@ -79,6 +79,13 @@ class SignUpWidget extends StatelessWidget {
                   case SubmitStatus.emailAlreadyUsed:
                     message = 'Given email is already used!';
                     break;
+                  case SubmitStatus.weakPassword:
+                    message =
+                        'Weak Password! Should have at least 6 characters';
+                    break;
+                  case SubmitStatus.invalid:
+                    message = 'Some internal error occured. Try again!';
+                    break;
                   default:
                     message = ' ';
                 }

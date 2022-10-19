@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_task_list/data/dummy_state_handler.dart';
+import 'package:flutter_task_list/data/login_state_handler.dart';
 import 'package:flutter_task_list/data/remote/data_source/user_rds.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:provider/provider.dart';
@@ -24,10 +24,8 @@ class TslGeneralProvider extends StatelessWidget {
       );
 
   List<SingleChildWidget> rdsProviders() => [
-        ProxyProvider<DummyStateHandler, UserRds>(
-          update: (_, dummyStateHandler, userRds) => UserRds(
-            dummyStateHandler: dummyStateHandler,
-          ),
+        Provider<UserRds>(
+          create: (_) => UserRds(),
         ),
       ];
 
@@ -40,8 +38,8 @@ class TslGeneralProvider extends StatelessWidget {
       ];
 
   List<SingleChildWidget> changeNotifiersProviders() => [
-        ChangeNotifierProvider<DummyStateHandler>(
-          create: (_) => DummyStateHandler(),
+        ChangeNotifierProvider<LoginStateHandler>(
+          create: (_) => LoginStateHandler(),
         ),
       ];
 }

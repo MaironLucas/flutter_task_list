@@ -1,5 +1,6 @@
+import 'package:flutter_task_list/common/exceptions.dart';
 import 'package:flutter_task_list/common/subscription_holder.dart';
-import 'package:flutter_task_list/data/dummy_state_handler.dart';
+import 'package:flutter_task_list/data/login_state_handler.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/common/view_utils.dart';
 import 'package:flutter_task_list/views/auth/sign_in/sign_in_models.dart';
@@ -47,7 +48,7 @@ class SignInBloc with SubscriptionHolder {
   }
 
   final UserRepository userRepository;
-  final DummyStateHandler dummyStateHandler;
+  final LoginStateHandler dummyStateHandler;
 
   final _onEmailValueChangedSubject = BehaviorSubject<String>();
   Sink<String?> get onEmailValueChanged => _onEmailValueChangedSubject.sink;
@@ -92,14 +93,18 @@ class SignInBloc with SubscriptionHolder {
   Stream<SignInAction> _submitSignIn() async* {
     try {
       _onButtonStatusChangedSubject.add(ButtonLoading());
-      userRepository.signInUser(_emailValue!, _passwordValue!);
+      await userRepository.signInUser(_emailValue!, _passwordValue!);
       _onSubmitStatusSubject.add(SubmitStatus.valid);
       yield SignInSuccessAction();
-    } catch (e) {
+    } catch (error) {
       _onButtonStatusChangedSubject.add(ButtonInactive());
       _onEmailInputStatusChangedSubject.add(InputStatus.error);
       _onPasswordInputStatusChangedSubject.add(InputStatus.error);
-      _onSubmitStatusSubject.add(SubmitStatus.wrongCredentials);
+      if (error is WrongCredentialsException) {
+        _onSubmitStatusSubject.add(SubmitStatus.wrongCredentials);
+      } else {
+        _onSubmitStatusSubject.add(SubmitStatus.invalid);
+      }
     }
   }
 
