@@ -1,11 +1,28 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/auth/auth_view.dart';
+import 'package:flutter_task_list/views/settings/settings_bloc.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+  const SettingsPage({
+    super.key,
+    required this.bloc,
+  });
 
-  //static Widget create() => ProxyProvider()
+  final SettingsBloc bloc;
+
+  static Widget create() => ProxyProvider<UserRepository, SettingsBloc>(
+        update: (_, userRepository, __) => SettingsBloc(
+          userRepository: userRepository,
+        ),
+        child: Consumer<SettingsBloc>(
+          builder: (_, bloc, __) => SettingsPage(
+            bloc: bloc,
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {

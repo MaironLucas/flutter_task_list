@@ -12,11 +12,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  final List<Widget> _widgetOptions = const <Widget>[
-    ListsPage(),
-    SettingsPage(),
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -44,7 +39,13 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         body: Center(
-          child: _widgetOptions[_selectedIndex],
+          child: IndexedStack(
+            index: _selectedIndex,
+            children: [
+              ListsPage.create(),
+              SettingsPage.create(),
+            ],
+          ),
         ),
         bottomNavigationBar: NavigationBar(
           destinations: const <NavigationDestination>[
