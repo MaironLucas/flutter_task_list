@@ -7,12 +7,16 @@ MyTheme currentTheme = MyTheme();
 
 ThemeData dark = ThemeData(
     brightness: Brightness.dark,
-    hintColor: const Color.fromRGBO(0, 0, 0, 0.5),
+    hintColor: const Color.fromARGB(255, 80, 80, 80),
     fontFamily: "Inter",
-    textTheme: const TextTheme(headline1: TextStyle(fontSize: 20)));
+    textTheme: const TextTheme(
+        headlineSmall: TextStyle(fontSize: 20),
+        labelSmall: TextStyle(fontWeight: FontWeight.bold)));
 
 ThemeData light = ThemeData(
     brightness: Brightness.light,
-    hintColor: Colors.grey,
+    hintColor: const Color.fromARGB(255, 80, 80, 80),
     fontFamily: "Inter",
-    textTheme: const TextTheme(headline1: TextStyle(fontSize: 20)));
+    textTheme: const TextTheme(
+        headlineSmall: TextStyle(fontSize: 20),
+        labelSmall: TextStyle(fontWeight: FontWeight.bold)));

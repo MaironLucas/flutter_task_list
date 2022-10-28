@@ -27,18 +27,15 @@ class _AuthPageState extends State<AuthPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                onPressed: () => currentTheme.switchTheme(),
-                icon: const Icon(
-                  Icons.wb_sunny,
-                  color: Color.fromRGBO(217, 217, 217, 1),
-                ),
-              )
-            ],
-          ),
+          actions: [
+            IconButton(
+              onPressed: () => currentTheme.switchTheme(),
+              icon: const Icon(
+                Icons.wb_sunny,
+                color: Color.fromRGBO(217, 217, 217, 1),
+              ),
+            )
+          ],
         ),
         body: SingleChildScrollView(
           child: login

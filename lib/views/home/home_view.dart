@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/config.dart';
+import 'package:flutter_task_list/views/create/create_page.dart';
 import 'package:flutter_task_list/views/list/lists_page.dart';
 import 'package:flutter_task_list/views/settings/settings_page.dart';
 
@@ -11,12 +13,31 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  List<String> title = ['Tasks', 'Create', 'Settings'];
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _selectedIndex = (index != 1) ? index : _selectedIndex;
     });
+
+    if (index == 1) {
+      showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (BuildContext context) {
+            return const CreatePage();
+          });
+    }
   }
+
+  List<String> tarefas = [
+    "Tarefa 1",
+    "Tarefa 2",
+    "Tarefa 3",
+    "Tarefa 4",
+    "Tarefa 5",
+    "Tarefa 6",
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -25,43 +46,64 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            // ignore: prefer_const_literals_to_create_immutables
-            children: [
-              const Icon(
-                Icons.wb_sunny,
-                color: Color.fromRGBO(49, 45, 84, 1),
-              ),
-            ],
+          centerTitle: true,
+          title: Text(
+            title[_selectedIndex],
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
+          actions: [
+            IconButton(
+              onPressed: () => currentTheme.switchTheme(),
+              icon: const Icon(
+                Icons.wb_sunny,
+                color: Color.fromRGBO(217, 217, 217, 1),
+              ),
+            )
+          ],
         ),
         body: Center(
           child: IndexedStack(
             index: _selectedIndex,
             children: [
-              ListsPage.create(),
+              ListsPage.create(tarefas),
+              const Material(),
               SettingsPage.create(),
             ],
           ),
         ),
-        bottomNavigationBar: NavigationBar(
-          destinations: const <NavigationDestination>[
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home),
-              label: 'Home',
+        bottomNavigationBar: BottomNavigationBar(
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          selectedItemColor: Colors.indigoAccent,
+          items: <BottomNavigationBarItem>[
+            const BottomNavigationBarItem(
+                icon: Icon(Icons.home_outlined),
+                activeIcon: Icon(Icons.home),
+                label: ''),
+            BottomNavigationBarItem(
+              icon: Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  decoration: const BoxDecoration(
+                      color: Colors.indigoAccent, shape: BoxShape.circle),
+                  padding: const EdgeInsets.all(14),
+                  child: const Icon(
+                    Icons.add,
+                    color: Color.fromRGBO(217, 217, 217, 1),
+                  ),
+                ),
+              ),
+              label: '',
             ),
-            NavigationDestination(
-              icon: Icon(Icons.settings_outlined),
-              selectedIcon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
+            const BottomNavigationBarItem(
+                icon: Icon(Icons.settings_outlined),
+                activeIcon: Icon(Icons.settings),
+                label: ''),
           ],
-          selectedIndex: _selectedIndex,
-          onDestinationSelected: _onItemTapped,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
         ),
       ),
     );
