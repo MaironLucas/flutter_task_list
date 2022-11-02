@@ -55,7 +55,7 @@ class _SignInWidgetState extends State<SignInWidget> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const HomePage(),
+              builder: (context) => HomePage.create(),
             ),
           );
         }

@@ -10,6 +10,6 @@ class MainContainerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Consumer<LoginStateHandler>(
         builder: (context, dummyState, _) =>
-            dummyState.loggedIn ? const HomePage() : const AuthPage(),
+            dummyState.loggedIn ? HomePage.create() : const AuthPage(),
       );
 }

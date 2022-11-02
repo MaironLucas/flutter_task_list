@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_task_list/data/remote/data_source/user_rds.dart';
 import 'package:flutter_task_list/views/common/view_utils.dart';
 
@@ -39,4 +40,6 @@ class UserRepository {
 
   Future<void> signUpUser(String name, String email, String password) =>
       userRds.signUpUser(name, email, password);
+
+  User getUser() => userRds.getUser();
 }

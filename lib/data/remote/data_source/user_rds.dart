@@ -2,7 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_task_list/common/exceptions.dart';
 
 class UserRds {
-  UserRds();
+  UserRds({
+    required this.firebaseAuth,
+  });
+
+  final FirebaseAuth firebaseAuth;
 
   Future<void> signInUser(String email, String password) async {
     try {
@@ -45,5 +49,12 @@ class UserRds {
       }
       throw InternalException();
     }
+  }
+
+  User getUser() {
+    if (firebaseAuth.currentUser != null) {
+      return firebaseAuth.currentUser!;
+    }
+    throw UnauthenticatedUserException();
   }
 }
