@@ -11,14 +11,32 @@ class TaskRds {
 
   final DatabaseReference database;
 
+  static const String _taskName = "name";
+  static const String _taskDescription = "description";
+
   Future<void> createTask(User user, String name, String description) async {
     try {
       final newRef = database.child('${user.uid}/tasks');
       await newRef.push().update({
-        "name": name,
-        "description": description,
+        _taskName: name,
+        _taskDescription: description,
       });
     } catch (error) {}
+  }
+
+  Future<void> updateTask(User user, Task task) async {
+    final newRef = database.child('${user.uid}/tasks');
+    await newRef.update({
+      task.id: {
+        _taskName: task.name,
+        _taskDescription: task.description,
+      }
+    });
+  }
+
+  Future<void> deleteTask(User user, Task task) async {
+    final newRef = database.child('${user.uid}/tasks');
+    newRef.child(task.id).remove();
   }
 
   Future<List<Task>> getTasks(User user) async {

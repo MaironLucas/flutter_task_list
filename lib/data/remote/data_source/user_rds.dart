@@ -8,6 +8,8 @@ class UserRds {
 
   final FirebaseAuth firebaseAuth;
 
+  User get user => getUser();
+
   Future<void> signInUser(String email, String password) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -56,5 +58,17 @@ class UserRds {
       return firebaseAuth.currentUser!;
     }
     throw UnauthenticatedUserException();
+  }
+
+  Future<void> updateUserName(String name) async {
+    user.updateDisplayName(name);
+  }
+
+  Future<void> updateUserEmaik(String email) async {
+    user.updateEmail(email);
+  }
+
+  Future<void> updateUserPassword(String newPassword) async {
+    user.updatePassword(newPassword);
   }
 }
