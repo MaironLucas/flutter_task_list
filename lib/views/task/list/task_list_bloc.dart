@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_task_list/common/subscription_holder.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
-import 'package:flutter_task_list/views/task/tasks_models.dart';
+import 'package:flutter_task_list/views/task/list/task_list_models.dart';
 import 'package:rxdart/rxdart.dart';
 
-class TasksBloc with SubscriptionHolder {
-  TasksBloc({required this.taskRepository}) {
+class TaskListBloc with SubscriptionHolder {
+  TaskListBloc({required this.taskRepository}) {
     Rx.merge<void>([
       Stream.value(null),
       _onTryAgainSubject,
@@ -19,13 +19,13 @@ class TasksBloc with SubscriptionHolder {
 
   final TaskRepository taskRepository;
 
-  final _onNewStateSubject = BehaviorSubject<TasksState>();
-  Stream<TasksState> get onNewState => _onNewStateSubject.stream;
+  final _onNewStateSubject = BehaviorSubject<TaskListState>();
+  Stream<TaskListState> get onNewState => _onNewStateSubject.stream;
 
   final _onTryAgainSubject = PublishSubject<void>();
   Sink<void> get onTryAgain => _onTryAgainSubject.sink;
 
-  Stream<TasksState> _fetchTaskList() async* {
+  Stream<TaskListState> _fetchTaskList() async* {
     yield Loading();
     try {
       var taskList = await taskRepository.getTasks(

@@ -8,7 +8,7 @@ import 'package:flutter_task_list/views/home/home_bloc.dart';
 import 'package:flutter_task_list/views/home/home_model.dart';
 import 'package:flutter_task_list/views/home/modal/create_task_modal.dart';
 import 'package:flutter_task_list/views/settings/settings_page.dart';
-import 'package:flutter_task_list/views/task/tasks_page.dart';
+import 'package:flutter_task_list/views/task/list/task_list_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage> {
             child: IndexedStack(
               index: _selectedIndex,
               children: [
-                TasksPage.create(),
+                TaskListPage.create(),
                 const Material(),
                 SettingsPage.create(),
               ],

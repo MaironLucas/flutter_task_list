@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
 import 'package:flutter_task_list/views/common/async_snapshot_response_view.dart';
-import 'package:flutter_task_list/views/task/tasks_bloc.dart';
-import 'package:flutter_task_list/views/task/tasks_models.dart';
+import 'package:flutter_task_list/views/task/list/task_list_bloc.dart';
+import 'package:flutter_task_list/views/task/list/task_list_models.dart';
 import 'package:provider/provider.dart';
 
-class TasksPage extends StatelessWidget {
-  const TasksPage({super.key, required this.bloc});
+class TaskListPage extends StatelessWidget {
+  const TaskListPage({super.key, required this.bloc});
 
-  final TasksBloc bloc;
+  final TaskListBloc bloc;
 
-  static Widget create() => ProxyProvider<TaskRepository, TasksBloc>(
-        update: (_, taskRepository, __) => TasksBloc(
+  static Widget create() => ProxyProvider<TaskRepository, TaskListBloc>(
+        update: (_, taskRepository, __) => TaskListBloc(
           taskRepository: taskRepository,
         ),
-        child: Consumer<TasksBloc>(
-          builder: (_, bloc, __) => TasksPage(
+        child: Consumer<TaskListBloc>(
+          builder: (_, bloc, __) => TaskListPage(
             bloc: bloc,
           ),
         ),

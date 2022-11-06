@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_task_list/common/exceptions.dart';
 import 'package:flutter_task_list/data/mappers/remote_to_domain.dart';
-import 'package:flutter_task_list/data/model/task.dart';
+import 'package:flutter_task_list/data/model/task_summary.dart';
 
 class TaskRds {
   TaskRds({
@@ -24,7 +24,7 @@ class TaskRds {
     } catch (error) {}
   }
 
-  Future<void> updateTask(User user, Task task) async {
+  Future<void> updateTask(User user, TaskSummary task) async {
     final newRef = database.child('${user.uid}/tasks');
     await newRef.update({
       task.id: {
@@ -34,12 +34,12 @@ class TaskRds {
     });
   }
 
-  Future<void> deleteTask(User user, Task task) async {
+  Future<void> deleteTask(User user, TaskSummary task) async {
     final newRef = database.child('${user.uid}/tasks');
     newRef.child(task.id).remove();
   }
 
-  Future<List<Task>> getTasks(User user) async {
+  Future<List<TaskSummary>> getTasks(User user) async {
     final newRef = database.child('${user.uid}/tasks');
     final snapshot = await newRef.get();
     if (snapshot.exists) {

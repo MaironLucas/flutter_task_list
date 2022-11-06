@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_task_list/data/model/task.dart';
+import 'package:flutter_task_list/data/model/task_summary.dart';
 import 'package:flutter_task_list/data/remote/data_source/task_rds.dart';
 
 class TaskRepository {
@@ -12,5 +12,5 @@ class TaskRepository {
   Future<void> createTask(User user, String name, String description) =>
       taskRds.createTask(user, name, description);
 
-  Future<List<Task>> getTasks(User user) => taskRds.getTasks(user);
+  Future<List<TaskSummary>> getTasks(User user) => taskRds.getTasks(user);
 }
