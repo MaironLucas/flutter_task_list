@@ -11,7 +11,7 @@ ThemeData dark = ThemeData(
     fontFamily: "Inter",
     textTheme: const TextTheme(
         headlineSmall: TextStyle(fontSize: 20),
-        labelSmall: TextStyle(fontWeight: FontWeight.bold)));
+        labelSmall: TextStyle(fontSize: 13)));
 
 ThemeData light = ThemeData(
     brightness: Brightness.light,
@@ -19,4 +19,4 @@ ThemeData light = ThemeData(
     fontFamily: "Inter",
     textTheme: const TextTheme(
         headlineSmall: TextStyle(fontSize: 20),
-        labelSmall: TextStyle(fontWeight: FontWeight.bold)));
+        labelSmall: TextStyle(fontSize: 13)));

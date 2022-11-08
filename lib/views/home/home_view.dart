@@ -42,25 +42,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  List<String> title = ['Tasks', 'Create', 'Settings'];
+  late PageController pc;
+  List<String> title = ['Tasks', 'Profile & Preferences'];
 
-  void _onItemTapped(int index) {
+  @override
+  void initState() {
+    super.initState();
+    pc = PageController(initialPage: _selectedIndex);
+  }
+
+  void setCurrentPage(page) {
     setState(() {
-      _selectedIndex = (index != 1) ? index : _selectedIndex;
+      _selectedIndex = page;
     });
-
-    if (index == 1) {
-      showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          builder: (BuildContext context) {
-            return CreateTaskModal(
-              onCreateTaskTap: (TaskInput input) {
-                return widget.bloc.onCreateTaskTap.add(input);
-              },
-            );
-          });
-    }
   }
 
   @override
@@ -99,46 +93,54 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           body: Center(
-            child: IndexedStack(
-              index: _selectedIndex,
+            child: PageView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: pc,
+              onPageChanged: setCurrentPage,
               children: [
                 TaskListPage.create(),
-                const Material(),
                 SettingsPage.create(),
               ],
+            ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (BuildContext context) {
+                    return CreateTaskModal(
+                      onCreateTaskTap: (TaskInput input) {
+                        return widget.bloc.onCreateTaskTap.add(input);
+                      },
+                    );
+                  });
+            },
+            backgroundColor: Colors.indigoAccent,
+            child: const Icon(
+              Icons.add,
+              color: Color.fromRGBO(217, 217, 217, 1),
             ),
           ),
           bottomNavigationBar: BottomNavigationBar(
             showSelectedLabels: false,
             showUnselectedLabels: false,
             selectedItemColor: Colors.indigoAccent,
-            items: <BottomNavigationBarItem>[
-              const BottomNavigationBarItem(
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
                   icon: Icon(Icons.home_outlined),
                   activeIcon: Icon(Icons.home),
                   label: ''),
               BottomNavigationBarItem(
-                icon: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.indigoAccent, shape: BoxShape.circle),
-                    padding: const EdgeInsets.all(14),
-                    child: const Icon(
-                      Icons.add,
-                      color: Color.fromRGBO(217, 217, 217, 1),
-                    ),
-                  ),
-                ),
-                label: '',
-              ),
-              const BottomNavigationBarItem(
-                  icon: Icon(Icons.settings_outlined),
-                  activeIcon: Icon(Icons.settings),
+                  icon: Icon(Icons.person_outlined),
+                  activeIcon: Icon(Icons.person),
                   label: ''),
             ],
             currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
+            // onTap: _onItemTapped,
+            onTap: (page) => pc.animateToPage(page,
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.ease),
           ),
         ),
       ),

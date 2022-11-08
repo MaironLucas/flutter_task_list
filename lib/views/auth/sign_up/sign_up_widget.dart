@@ -61,7 +61,7 @@ class SignUpWidget extends StatelessWidget {
                   children: [
                     Text(
                       "Welcome Onboard !",
-                      style: Theme.of(context).textTheme.headline1,
+                      style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const Text(
                       "Let's help you to meet your task.",

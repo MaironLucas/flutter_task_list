@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
 import 'package:flutter_task_list/views/common/async_snapshot_response_view.dart';
+import 'package:flutter_task_list/views/task/list/task_details/task_page.dart';
 import 'package:flutter_task_list/views/task/list/task_list_bloc.dart';
 import 'package:flutter_task_list/views/task/list/task_list_models.dart';
 import 'package:provider/provider.dart';
@@ -34,8 +35,9 @@ class TaskListPage extends StatelessWidget {
           itemCount: success.taskList.length,
           itemBuilder: (context, index) {
             final item = success.taskList[index];
-
             return ListTile(
+              onTap: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => TaskPage())),
               title: Text(item.name),
               subtitle: Text(item.description),
             );

@@ -71,7 +71,7 @@ class _SignInWidgetState extends State<SignInWidget> {
                 child: Center(
                   child: Text(
                     "Welcome Back !",
-                    style: Theme.of(context).textTheme.headline1,
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ),
               ),
