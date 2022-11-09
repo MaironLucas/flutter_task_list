@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_task_list/config.dart';
+import 'package:flutter_task_list/data/data_observables.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/common/action_handler.dart';
@@ -16,17 +17,19 @@ class HomePage extends StatefulWidget {
 
   final HomeBloc bloc;
 
-  static Widget create() =>
-      ProxyProvider2<TaskRepository, UserRepository, HomeBloc>(
+  static Widget create() => ProxyProvider3<TaskRepository, UserRepository,
+          TaskListUpdateSinkWrapper, HomeBloc>(
         update: (
           _,
           taskRepository,
           userRepository,
+          taskListUpdateSinkWrapper,
           __,
         ) =>
             HomeBloc(
           taskRepository: taskRepository,
           userRepository: userRepository,
+          taskListUpdateSink: taskListUpdateSinkWrapper.value,
         ),
         child: Consumer<HomeBloc>(
           builder: (_, bloc, __) => HomePage(

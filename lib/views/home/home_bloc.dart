@@ -8,6 +8,7 @@ class HomeBloc with SubscriptionHolder {
   HomeBloc({
     required this.taskRepository,
     required this.userRepository,
+    required this.taskListUpdateSink,
   }) {
     _onCreateTaskTapSubject
         .flatMap(_createTask)
@@ -17,6 +18,7 @@ class HomeBloc with SubscriptionHolder {
 
   final TaskRepository taskRepository;
   final UserRepository userRepository;
+  final Sink<void> taskListUpdateSink;
 
   final _onCreateTaskTapSubject = PublishSubject<TaskInput>();
   Sink<TaskInput> get onCreateTaskTap => _onCreateTaskTapSubject.sink;
@@ -28,9 +30,10 @@ class HomeBloc with SubscriptionHolder {
     try {
       final user = userRepository.getUser();
       await taskRepository.createTask(user, input.name, input.description);
+      taskListUpdateSink.add(null);
       yield SuccessOnCreateTask();
     } catch (error) {
-      FailOnCreateTask();
+      yield FailOnCreateTask();
     }
   }
 

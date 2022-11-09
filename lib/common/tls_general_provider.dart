@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/data/data_observables.dart';
 import 'package:flutter_task_list/data/login_state_handler.dart';
 import 'package:flutter_task_list/data/remote/data_source/task_rds.dart';
 import 'package:flutter_task_list/data/remote/data_source/user_rds.dart';
@@ -8,8 +9,9 @@ import 'package:flutter_task_list/data/repository/task_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:rxdart/rxdart.dart';
 
-class TslGeneralProvider extends StatelessWidget {
+class TslGeneralProvider extends StatefulWidget {
   const TslGeneralProvider({
     Key? key,
     required this.child,
@@ -18,15 +20,38 @@ class TslGeneralProvider extends StatelessWidget {
   final Widget? child;
 
   @override
+  State<TslGeneralProvider> createState() => _TslGeneralProviderState();
+}
+
+class _TslGeneralProviderState extends State<TslGeneralProvider> {
+  final _taskListSubject = PublishSubject<void>();
+
+  @override
+  void dispose() {
+    _taskListSubject.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => MultiProvider(
         providers: [
+          ...buildDataObservables(),
           ...changeNotifiersProviders(),
           ...firebaseProviders(),
           ...rdsProviders(),
           ...repositoryProviders(),
         ],
-        child: child,
+        child: widget.child,
       );
+
+  List<SingleChildWidget> buildDataObservables() => [
+        Provider<TaskListUpdateStreamWrapper>(
+          create: (_) => TaskListUpdateStreamWrapper(_taskListSubject.stream),
+        ),
+        Provider<TaskListUpdateSinkWrapper>(
+          create: (_) => TaskListUpdateSinkWrapper(_taskListSubject.sink),
+        )
+      ];
 
   List<SingleChildWidget> firebaseProviders() => [
         Provider<DatabaseReference>(

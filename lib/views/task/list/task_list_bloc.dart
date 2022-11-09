@@ -5,10 +5,14 @@ import 'package:flutter_task_list/views/task/list/task_list_models.dart';
 import 'package:rxdart/rxdart.dart';
 
 class TaskListBloc with SubscriptionHolder {
-  TaskListBloc({required this.taskRepository}) {
+  TaskListBloc({
+    required this.taskRepository,
+    required this.taskListUpdateStream,
+  }) {
     Rx.merge<void>([
       Stream.value(null),
       _onTryAgainSubject,
+      taskListUpdateStream,
     ])
         .flatMap(
           (_) => _fetchTaskList(),
@@ -18,6 +22,7 @@ class TaskListBloc with SubscriptionHolder {
   }
 
   final TaskRepository taskRepository;
+  final Stream<void> taskListUpdateStream;
 
   final _onNewStateSubject = BehaviorSubject<TaskListState>();
   Stream<TaskListState> get onNewState => _onNewStateSubject.stream;

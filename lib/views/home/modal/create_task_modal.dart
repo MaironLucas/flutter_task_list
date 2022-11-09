@@ -111,11 +111,14 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                   ),
                   TextButton(
                     onPressed: () {
-                      widget.onCreateTaskTap(
-                        TaskInput(
-                            name: _nameController.text,
-                            description: _descriptionController.text),
-                      );
+                      if (_nameController.text != '' &&
+                          _nameController.text != ' ') {
+                        widget.onCreateTaskTap(
+                          TaskInput(
+                              name: _nameController.text,
+                              description: _descriptionController.text),
+                        );
+                      }
                     },
                     style: ButtonStyle(
                         minimumSize: MaterialStateProperty.all<Size>(
