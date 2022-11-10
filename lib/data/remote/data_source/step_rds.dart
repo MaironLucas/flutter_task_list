@@ -1,5 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_task_list/common/exceptions.dart';
+import 'package:flutter_task_list/data/mappers/remote_to_domain.dart';
 import 'package:flutter_task_list/data/model/step.dart';
 
 class StepRds {
@@ -12,7 +13,15 @@ class StepRds {
   static const String _stepTitle = 'title';
   static const String _stepState = 'isConcluded';
 
-  Future<void> getStepList(String userId, String taskId) async {}
+  Future<List<Step>> getStepList(String userId, String taskId) async {
+    final newRef = database.child('$userId/tasks/$taskId');
+    final snapshot = await newRef.get();
+    if (snapshot.exists) {
+      return snapshot.toStepList();
+    } else {
+      throw TaskDoesntHaveStepsException();
+    }
+  }
 
   Future<void> addStep(String userId, String taskId, String stepTitle) async {
     final newRef = database.child('$userId/tasks/$taskId/steps');
@@ -24,5 +33,13 @@ class StepRds {
 
   Future<void> removeStep(String userId, String taskId, String stepId) async {}
 
-  Future<void> updateStep(String userId, String taskId, Step newStep) async {}
+  Future<void> updateStepState(
+      String userId, String taskId, String stepId, bool state) async {
+    final newRef = database.child('$userId/tasks/$taskId/steps');
+    await newRef.update({
+      stepId: {
+        _stepState: state,
+      }
+    });
+  }
 }

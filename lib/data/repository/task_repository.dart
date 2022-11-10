@@ -13,4 +13,7 @@ class TaskRepository {
       taskRds.createTask(user, name, description);
 
   Future<List<TaskSummary>> getTasks(User user) => taskRds.getTasks(user);
+
+  Future<TaskSummary> getTaskSummary(User user, String taskId) =>
+      taskRds.getTaskSummary(user, taskId);
 }

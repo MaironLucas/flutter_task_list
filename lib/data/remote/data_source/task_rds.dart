@@ -48,4 +48,14 @@ class TaskRds {
       throw UserDoesntHaveTaskException();
     }
   }
+
+  Future<TaskSummary> getTaskSummary(User user, String taskId) async {
+    final newRef = database.child('${user.uid}/tasks/$taskId');
+    final snapshot = await newRef.get();
+    if (snapshot.exists) {
+      return snapshot.toTaskSummaryDM();
+    } else {
+      throw Exception();
+    }
+  }
 }
