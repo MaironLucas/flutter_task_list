@@ -16,9 +16,9 @@ extension TaskSummaryListRMtoDM on DataSnapshot {
         ),
       );
     });
-    taskList.sort(orderBy == OrderBy.descending
-        ? (a, b) => a.name.compareTo(b.name)
-        : (a, b) => b.name.compareTo(a.name));
+    taskList.sort(orderBy == OrderBy.ascending
+        ? (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase())
+        : (a, b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()));
     return taskList;
   }
 }
@@ -46,9 +46,9 @@ extension StepListRMtoDM on DataSnapshot {
         ),
       ),
     );
-    stepList.sort(orderBy == OrderBy.descending
-        ? (a, b) => a.title.compareTo(b.title)
-        : (a, b) => b.title.compareTo(a.title));
+    stepList.sort(orderBy == OrderBy.ascending
+        ? (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase())
+        : (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()));
     return stepList;
   }
 }
