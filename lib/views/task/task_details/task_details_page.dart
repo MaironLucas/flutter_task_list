@@ -16,6 +16,7 @@ class TaskPage extends StatefulWidget {
 
 class _TaskPageState extends State<TaskPage> {
   List<String> lista = ["Item 1", "Item 2", "Item 3"];
+  List<bool> isSelected = [false, false, false];
 
   void openModalItem(int op, String? title, BuildContext context) {
     showDialog(
@@ -65,36 +66,41 @@ class _TaskPageState extends State<TaskPage> {
         itemCount: lista.length,
         itemBuilder: (context, index) {
           final item = lista[index];
-          return Slidable(
-            key: ValueKey<String>(item),
-            endActionPane: ActionPane(
-              motion: const BehindMotion(),
-              // dismissible:
-              //     DismissiblePane(onDismissed: () {}),
-              children: [
-                SlidableAction(
-                  onPressed: (context) => openModalItem(1, item, context),
-                  backgroundColor: Colors.indigo,
-                  foregroundColor: Colors.white,
-                  icon: Icons.edit,
-                  label: 'Edit',
-                ),
-                const SlidableAction(
-                  onPressed: null,
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  icon: Icons.delete,
-                  label: 'Delete',
-                ),
-              ],
-            ),
-            child: ListTile(
-              // onTap: () => Navigator.of(context)
-              //     .push(MaterialPageRoute(
-              //         builder: (context) => TaskPage(
-              //               title: item.name,
-              //             ))),
-              title: Text(item),
+          return TextButton(
+            onPressed: () =>
+                setState(() => isSelected[index] = !isSelected[index]),
+            child: Slidable(
+              key: ValueKey<String>(lista[index]),
+              endActionPane: ActionPane(
+                motion: const BehindMotion(),
+                children: [
+                  SlidableAction(
+                    onPressed: (context) =>
+                        setState(() => isSelected[index] = !isSelected[index]),
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    icon: Icons.check,
+                  ),
+                  SlidableAction(
+                    onPressed: (context) => openModalItem(1, item, context),
+                    backgroundColor: Colors.indigo,
+                    foregroundColor: Colors.white,
+                    icon: Icons.edit,
+                  ),
+                  const SlidableAction(
+                    onPressed: null,
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    icon: Icons.delete,
+                  ),
+                ],
+              ),
+              child: ListTile(
+                tileColor: isSelected[index] == true
+                    ? Colors.blue
+                    : Colors.transparent,
+                title: Text(item),
+              ),
             ),
           );
         },
