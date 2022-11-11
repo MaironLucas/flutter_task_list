@@ -11,11 +11,18 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  bool login = true;
+  late PageController pc;
+  int _selectedIndex = 0;
 
-  changeScreen(bool state) {
+  @override
+  void initState() {
+    super.initState();
+    pc = PageController(initialPage: _selectedIndex);
+  }
+
+  void changeScreen(page) {
     setState(() {
-      login = state;
+      _selectedIndex = page;
     });
   }
 
@@ -23,26 +30,21 @@ class _AuthPageState extends State<AuthPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          actions: [
-            IconButton(
-              onPressed: () => currentTheme.switchTheme(),
-              icon: const Icon(
-                Icons.wb_sunny,
-                color: Color.fromRGBO(217, 217, 217, 1),
-              ),
-            )
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: login
-              ? SignInWidget.create(changeScreen)
-              : SignUpWidget.create(changeScreen),
-        ),
+      child: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          SignInWidget.create(changeScreen),
+          SignUpWidget.create(changeScreen),
+        ],
       ),
+      // child: PageView(
+      //   physics: const NeverScrollableScrollPhysics(),
+      //   controller: pc,
+      //   children: [
+      //     SignInWidget.create(changeScreen),
+      //     SignUpWidget.create(changeScreen),
+      //   ],
+      // ),
     );
   }
 }

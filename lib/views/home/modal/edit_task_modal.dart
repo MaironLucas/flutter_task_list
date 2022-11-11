@@ -1,23 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_task_list/views/home/home_model.dart';
 
-class CreateTaskModal extends StatefulWidget {
-  const CreateTaskModal({
-    required this.onCreateTaskTap,
+class EditTaskModal extends StatefulWidget {
+  const EditTaskModal({
+    required this.onEditTaskTap,
+    required this.title,
+    required this.description,
     super.key,
   });
 
-  final Function(TaskInput input) onCreateTaskTap;
+  final Function(TaskInput input) onEditTaskTap;
+  final String title;
+  final String description;
 
   @override
-  State<CreateTaskModal> createState() => _CreateTaskModalState();
+  State<EditTaskModal> createState() => _EditTaskModalState();
 }
 
-class _CreateTaskModalState extends State<CreateTaskModal> {
+class _EditTaskModalState extends State<EditTaskModal> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  final _createTaskFormKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    _nameController.text = widget.title;
+    _descriptionController.text = widget.description;
+    super.initState();
+  }
+
+  final _editTaskFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +41,11 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
           child: Padding(
             padding: const EdgeInsets.all(20.0),
             child: Form(
-              key: _createTaskFormKey,
+              key: _editTaskFormKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  const Text("Add Task"),
+                  const Text("Edit Task"),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -75,8 +86,6 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                       ),
                       TextFormField(
                         controller: _descriptionController,
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
                         decoration: InputDecoration(
                           hintText: 'Enter Task description',
                           border: OutlineInputBorder(
@@ -95,7 +104,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                     onPressed: () {
                       if (_nameController.text != '' &&
                           _nameController.text != ' ') {
-                        widget.onCreateTaskTap(
+                        widget.onEditTaskTap(
                           TaskInput(
                               name: _nameController.text,
                               description: _descriptionController.text),
@@ -122,7 +131,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                         //   ),
                         ),
                     child: const Text(
-                      "Create",
+                      "Save",
                       style: TextStyle(
                         color: Colors.white,
                       ),

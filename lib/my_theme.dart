@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 
 class MyTheme with ChangeNotifier {
-  static bool _isDark = false;
+  static bool _isDark = true;
 
   String? orderBy = "Ascending";
-  String? fontSize = "Medium";
+  String? fontSizeLabel = "Medium";
+  num fontSize = 2;
 
   ThemeMode currentTheme() {
     return _isDark ? ThemeMode.dark : ThemeMode.light;
-  }
-
-  void switchTheme() {
-    _isDark = !_isDark;
-    notifyListeners();
   }
 
   void switchOrderBy(String? od) {
@@ -20,8 +16,24 @@ class MyTheme with ChangeNotifier {
     notifyListeners();
   }
 
-  void switchFontSize(String? od) {
-    fontSize = od;
+  void switchFontSizeLabel(String? od) {
+    fontSizeLabel = od;
+    if (od == "Small") {
+      fontSize = 0;
+    } else if (od == "Medium") {
+      fontSize = 1;
+    } else {
+      fontSize = 2;
+    }
+    notifyListeners();
+  }
+
+  void switchTheme(String? od) {
+    if (od == "Dark") {
+      _isDark = true;
+    } else {
+      _isDark = false;
+    }
     notifyListeners();
   }
 
@@ -29,7 +41,27 @@ class MyTheme with ChangeNotifier {
     return orderBy;
   }
 
-  String? getFontSize() {
-    return fontSize;
+  bool getOrderByStatus() {
+    if (orderBy == "Ascending") {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  String? getFontSizeLabel() {
+    return fontSizeLabel;
+  }
+
+  double? getFontSize() {
+    return fontSize + 0;
+  }
+
+  String? getTheme() {
+    if (_isDark) {
+      return "Dark";
+    } else {
+      return "Light";
+    }
   }
 }
