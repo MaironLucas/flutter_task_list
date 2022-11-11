@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_task_list/config.dart';
 import 'package:flutter_task_list/data/data_observables.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
@@ -8,6 +7,7 @@ import 'package:flutter_task_list/views/common/view_utils.dart';
 import 'package:flutter_task_list/views/home/home_bloc.dart';
 import 'package:flutter_task_list/views/home/home_model.dart';
 import 'package:flutter_task_list/views/home/modal/create_task_modal.dart';
+import 'package:flutter_task_list/views/home/modal/edit_task_modal.dart';
 import 'package:flutter_task_list/views/settings/settings_page.dart';
 import 'package:flutter_task_list/views/task/list/task_list_page.dart';
 import 'package:provider/provider.dart';
@@ -48,6 +48,10 @@ class _HomePageState extends State<HomePage> {
   late PageController pc;
   List<String> title = ['Tasks', 'Profile & Preferences'];
 
+  Map<int, GlobalKey> navigatorKeys = {
+    0: GlobalKey(),
+  };
+
   @override
   void initState() {
     super.initState();
@@ -60,93 +64,88 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void openModalTask(int action, String? title, String? description) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: action == 0
+              ? CreateTaskModal(
+                  onCreateTaskTap: (TaskInput input) {
+                    return widget.bloc.onCreateTaskTap.add(input);
+                  },
+                )
+              : EditTaskModal(
+                  onEditTaskTap: (TaskInput input) {
+                    return widget.bloc.onEditTaskTap.add(input);
+                  },
+                  title: title!,
+                  description: description!,
+                ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ActionHandler<HomeAction>(
-      actionStream: widget.bloc.onHomeAction,
-      onReceived: (action) {
-        if (action is SuccessOnCreateTask) {
-          Navigator.of(context).pop();
-          displaySnackBar(context, 'Task successfully created!');
-          _selectedIndex = 0;
-        } else if (action is FailOnCreateTask) {
-          displaySnackBar(context, 'Failed to create Task!');
-        }
-      },
-      child: WillPopScope(
-        onWillPop: () async => false,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            centerTitle: true,
-            title: Text(
-              title[_selectedIndex],
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            actions: [
-              IconButton(
-                onPressed: () => currentTheme.switchTheme(),
-                icon: const Icon(
-                  Icons.wb_sunny,
-                  color: Color.fromRGBO(217, 217, 217, 1),
-                ),
-              )
-            ],
-          ),
-          body: Center(
-            child: PageView(
+        actionStream: widget.bloc.onHomeAction,
+        onReceived: (action) {
+          if (action is SuccessOnCreateTask) {
+            Navigator.of(context).pop();
+            displaySnackBar(context, 'Task successfully created!');
+            _selectedIndex = 0;
+          } else if (action is FailOnCreateTask) {
+            displaySnackBar(context, 'Failed to create Task!');
+          }
+        },
+        child: WillPopScope(
+          onWillPop: () async => false,
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: PageView(
               physics: const NeverScrollableScrollPhysics(),
               controller: pc,
               onPageChanged: setCurrentPage,
               children: [
-                TaskListPage.create(),
+                TaskListPage.create(navigatorKeys[0]!, openModalTask),
                 SettingsPage.create(),
               ],
             ),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (BuildContext context) {
-                    return CreateTaskModal(
-                      onCreateTaskTap: (TaskInput input) {
-                        return widget.bloc.onCreateTaskTap.add(input);
-                      },
-                    );
-                  });
-            },
-            backgroundColor: Colors.indigoAccent,
-            child: const Icon(
-              Icons.add,
-              color: Color.fromRGBO(217, 217, 217, 1),
+            floatingActionButton: _selectedIndex == 0
+                ? FloatingActionButton(
+                    onPressed: () => openModalTask(0, '', ''),
+                    backgroundColor: Colors.indigoAccent,
+                    child: const Icon(
+                      Icons.add,
+                      color: Color.fromRGBO(217, 217, 217, 1),
+                    ),
+                  )
+                : const Material(),
+            bottomNavigationBar: BottomNavigationBar(
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              selectedItemColor: Colors.indigoAccent,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.home_outlined),
+                    activeIcon: Icon(Icons.home),
+                    label: ''),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.person_outlined),
+                    activeIcon: Icon(Icons.person),
+                    label: ''),
+              ],
+              currentIndex: _selectedIndex,
+              onTap: (page) {
+                pc.animateToPage(page,
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.ease);
+              },
+              // onTap: (value) => setCurrentPage(value)),
             ),
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            selectedItemColor: Colors.indigoAccent,
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.home_outlined),
-                  activeIcon: Icon(Icons.home),
-                  label: ''),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outlined),
-                  activeIcon: Icon(Icons.person),
-                  label: ''),
-            ],
-            currentIndex: _selectedIndex,
-            // onTap: _onItemTapped,
-            onTap: (page) => pc.animateToPage(page,
-                duration: const Duration(milliseconds: 400),
-                curve: Curves.ease),
-          ),
-        ),
-      ),
-    );
+        ));
   }
 }

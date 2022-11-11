@@ -9,7 +9,7 @@ import 'package:flutter_task_list/views/home/home_view.dart';
 import 'package:provider/provider.dart';
 
 class SignInWidget extends StatefulWidget {
-  final Function(bool parameters) changeScreen;
+  final Function(int parameters) changeScreen;
 
   final SignInBloc bloc;
 
@@ -19,7 +19,7 @@ class SignInWidget extends StatefulWidget {
     required this.bloc,
   });
 
-  static Widget create(Function(bool parameters) changeScreen) =>
+  static Widget create(Function(int parameters) changeScreen) =>
       ProxyProvider2<UserRepository, LoginStateHandler, SignInBloc>(
         update: (_, userRepository, dummyState, __) => SignInBloc(
           userRepository: userRepository,
@@ -60,158 +60,168 @@ class _SignInWidgetState extends State<SignInWidget> {
           );
         }
       },
-      child: Padding(
-        padding:
-            const EdgeInsets.only(left: 30.0, right: 30, bottom: 40, top: 100),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 60.0),
-              child: SizedBox(
-                child: Center(
-                  child: Text(
-                    "Welcome Back !",
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                ),
-              ),
-            ),
-            StreamBuilder<SubmitStatus>(
-              stream: bloc.onSubmitStatus,
-              builder: (context, snapshot) {
-                final submitStatus = snapshot.data ?? SubmitStatus.valid;
-                String message;
-                switch (submitStatus) {
-                  case SubmitStatus.wrongCredentials:
-                    message = 'Invalid email or password!';
-                    break;
-                  case SubmitStatus.invalid:
-                    message = 'Some internal error occured. Try again!';
-                    break;
-                  default:
-                    message = ' ';
-                }
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 30.0),
-                  child: Text(
-                    message,
-                    style: const TextStyle(
-                      color: Colors.red,
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(
+                left: 30.0, right: 30, bottom: 40, top: 100),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 60.0),
+                  child: SizedBox(
+                    child: Center(
+                      child: Text(
+                        "Welcome Back !",
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
                     ),
                   ),
-                );
-              },
-            ),
-            SizedBox(
-              height: 190,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20.0, right: 20),
-                child: Form(
-                  key: _loginFormKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TslFormField(
-                        hintText: 'Email',
-                        emptyFormMessage: 'Email field is required',
-                        invalidFormMessage: 'Given email is invalid',
-                        textController: _emailController,
-                        onChanged: (email) =>
-                            bloc.onEmailValueChanged.add(email),
-                        statusStream: bloc.onEmailInputStatusChangedStream,
+                ),
+                StreamBuilder<SubmitStatus>(
+                  stream: bloc.onSubmitStatus,
+                  builder: (context, snapshot) {
+                    final submitStatus = snapshot.data ?? SubmitStatus.valid;
+                    String message;
+                    switch (submitStatus) {
+                      case SubmitStatus.wrongCredentials:
+                        message = 'Invalid email or password!';
+                        break;
+                      case SubmitStatus.invalid:
+                        message = 'Some internal error occured. Try again!';
+                        break;
+                      default:
+                        message = ' ';
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 30.0),
+                      child: Text(
+                        message,
+                        style: const TextStyle(
+                          color: Colors.red,
+                        ),
                       ),
-                      // Expanded(child: Container()),
-                      TslFormField(
-                        hintText: 'Password',
-                        emptyFormMessage: 'Password field is required',
-                        textController: _passwordController,
-                        onChanged: (password) =>
-                            bloc.onPasswordValueChanged.add(password),
-                        statusStream: bloc.onPasswordInputStatusChanged,
+                    );
+                  },
+                ),
+                SizedBox(
+                  height: 190,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20.0, right: 20),
+                    child: Form(
+                      key: _loginFormKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TslFormField(
+                            hintText: 'Email',
+                            emptyFormMessage: 'Email field is required',
+                            invalidFormMessage: 'Given email is invalid',
+                            textController: _emailController,
+                            onChanged: (email) =>
+                                bloc.onEmailValueChanged.add(email),
+                            statusStream: bloc.onEmailInputStatusChangedStream,
+                          ),
+                          // Expanded(child: Container()),
+                          TslFormField(
+                            hintText: 'Password',
+                            emptyFormMessage: 'Password field is required',
+                            textController: _passwordController,
+                            onChanged: (password) =>
+                                bloc.onPasswordValueChanged.add(password),
+                            statusStream: bloc.onPasswordInputStatusChanged,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 105,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Doesn't have an account? ",
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 12)),
+                          InkWell(
+                            onTap: () {
+                              widget.changeScreen(1);
+                            },
+                            child: const Text(
+                              'Sign Up',
+                              style:
+                                  TextStyle(color: Colors.blue, fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Divider(
+                        height: 30,
+                        thickness: 1,
+                        indent: 20,
+                        endIndent: 20,
+                        color: Color.fromRGBO(217, 217, 217, 0.4),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: StreamBuilder<ButtonState>(
+                                stream: bloc.onButtonStatusChanged,
+                                builder: (context, snapshot) {
+                                  final buttonStatus =
+                                      snapshot.data ?? ButtonInactive();
+
+                                  if (buttonStatus is ButtonLoading) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  return TextButton(
+                                    onPressed: () =>
+                                        buttonStatus is ButtonActive
+                                            ? bloc.onSubmitButtonClick.add(null)
+                                            : null,
+                                    style: ButtonStyle(
+                                      minimumSize:
+                                          MaterialStateProperty.all<Size>(
+                                              const Size(1000, 60)),
+                                      shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                        ),
+                                      ),
+                                      backgroundColor: buttonStatus
+                                              is ButtonActive
+                                          ? MaterialStateProperty.all<Color>(
+                                              Colors.indigoAccent,
+                                            )
+                                          : MaterialStateProperty.all<Color>(
+                                              Colors.blueGrey,
+                                            ),
+                                    ),
+                                    child: const Text(
+                                      "Sign In",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  );
+                                }),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-              ),
+              ],
             ),
-            SizedBox(
-              height: 105,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Doesn't have an account? ",
-                          style: TextStyle(color: Colors.grey, fontSize: 12)),
-                      InkWell(
-                        onTap: () {
-                          widget.changeScreen(false);
-                        },
-                        child: const Text(
-                          'Sign Up',
-                          style: TextStyle(color: Colors.blue, fontSize: 12),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Divider(
-                    height: 30,
-                    thickness: 1,
-                    indent: 20,
-                    endIndent: 20,
-                    color: Color.fromRGBO(217, 217, 217, 0.4),
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: StreamBuilder<ButtonState>(
-                            stream: bloc.onButtonStatusChanged,
-                            builder: (context, snapshot) {
-                              final buttonStatus =
-                                  snapshot.data ?? ButtonInactive();
-
-                              if (buttonStatus is ButtonLoading) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              return TextButton(
-                                onPressed: () => buttonStatus is ButtonActive
-                                    ? bloc.onSubmitButtonClick.add(null)
-                                    : null,
-                                style: ButtonStyle(
-                                  minimumSize: MaterialStateProperty.all<Size>(
-                                      const Size(1000, 60)),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                  ),
-                                  backgroundColor: buttonStatus is ButtonActive
-                                      ? MaterialStateProperty.all<Color>(
-                                          Colors.indigoAccent,
-                                        )
-                                      : MaterialStateProperty.all<Color>(
-                                          Colors.blueGrey,
-                                        ),
-                                ),
-                                child: const Text(
-                                  "Sign In",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              );
-                            }),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

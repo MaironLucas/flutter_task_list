@@ -23,6 +23,9 @@ class HomeBloc with SubscriptionHolder {
   final _onCreateTaskTapSubject = PublishSubject<TaskInput>();
   Sink<TaskInput> get onCreateTaskTap => _onCreateTaskTapSubject.sink;
 
+  final _onEditTaskTapSubject = PublishSubject<TaskInput>();
+  Sink<TaskInput> get onEditTaskTap => _onEditTaskTapSubject.sink;
+
   final _onHomeActionSubject = PublishSubject<HomeAction>();
   Stream<HomeAction> get onHomeAction => _onHomeActionSubject.stream;
 
@@ -40,6 +43,7 @@ class HomeBloc with SubscriptionHolder {
   void dispose() {
     _onHomeActionSubject.close();
     _onCreateTaskTapSubject.close();
+    _onEditTaskTapSubject.close();
     disposeAll();
   }
 }
