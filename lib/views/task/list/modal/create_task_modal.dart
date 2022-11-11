@@ -98,8 +98,9 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                         widget.onCreateTaskTap(
                           TaskInput(
                               name: _nameController.text,
-                              description: _descriptionController.text),
+                              description: _descriptionController.text.trim()),
                         );
+                        Navigator.of(context).pop();
                       }
                     },
                     style: ButtonStyle(
@@ -111,16 +112,9 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                             borderRadius: BorderRadius.circular(50),
                           ),
                         ),
-                        backgroundColor:
-                            // buttonStatus is ButtonActive
-                            //     ?
-                            MaterialStateProperty.all<Color>(
+                        backgroundColor: MaterialStateProperty.all<Color>(
                           Colors.indigoAccent,
-                        )
-                        // : MaterialStateProperty.all<Color>(
-                        //     Colors.blueGrey,
-                        //   ),
-                        ),
+                        )),
                     child: const Text(
                       "Create",
                       style: TextStyle(

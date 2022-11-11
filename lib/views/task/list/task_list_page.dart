@@ -4,8 +4,10 @@ import 'package:flutter_task_list/data/data_observables.dart';
 import 'package:flutter_task_list/data/model/task_summary.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
+import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/async_snapshot_response_view.dart';
 import 'package:flutter_task_list/views/common/empty_state.dart';
+import 'package:flutter_task_list/views/common/view_utils.dart';
 import 'package:flutter_task_list/views/task/task_details/task_details_page.dart';
 import 'package:flutter_task_list/views/task/list/task_list_bloc.dart';
 import 'package:flutter_task_list/views/task/list/task_list_models.dart';
@@ -63,102 +65,114 @@ class TaskListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      key: navigatorKey,
-      onGenerateRoute: (settings) {
-        return MaterialPageRoute(
-            settings: settings,
-            builder: (context) {
-              return StreamBuilder(
-                stream: bloc.onNewState,
-                builder: (context, snapshot) =>
-                    AsyncSnapshotResponseView<Loading, Error, Success>(
-                  snapshot: snapshot,
-                  successWidgetBuilder: (context, success) {
-                    return Scaffold(
-                      appBar: AppBar(
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        centerTitle: true,
-                        title: Text(
-                          "Tasks",
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                      ),
-                      floatingActionButton: FloatingActionButton(
-                        onPressed: () => openModalTask(0, context),
-                        backgroundColor: Colors.indigoAccent,
-                        child: const Icon(
-                          Icons.add,
-                          color: Color.fromRGBO(217, 217, 217, 1),
-                        ),
-                      ),
-                      body: success.taskList.isEmpty
-                          ? EmptyState(
-                              message: 'Your task list is empty, add one now!',
-                              onTryAgainTap: () => bloc.onTryAgain.add(null),
-                              buttonText: 'Update',
-                              asset: 'assets/add_task.png',
-                            )
-                          : ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              reverse: currentTheme.getOrderByStatus(),
-                              itemCount: success.taskList.length,
-                              itemBuilder: (context, index) {
-                                final item = success.taskList[index];
-                                return Slidable(
-                                  key: ValueKey<TaskSummary>(item),
-                                  endActionPane: ActionPane(
-                                    motion: const BehindMotion(),
-                                    // dismissible:
-                                    //     DismissiblePane(onDismissed: () {}),
-                                    children: [
-                                      SlidableAction(
-                                        onPressed: (context) => openModalTask(
-                                          1,
-                                          context,
-                                          task: item,
-                                        ),
-                                        backgroundColor: Colors.indigo,
-                                        foregroundColor: Colors.white,
-                                        icon: Icons.edit,
-                                        label: 'Edit',
-                                      ),
-                                      SlidableAction(
-                                        onPressed: (_) =>
-                                            bloc.onDeleteTask.add(item.id),
-                                        backgroundColor: Colors.red,
-                                        foregroundColor: Colors.white,
-                                        icon: Icons.delete,
-                                        label: 'Delete',
-                                      ),
-                                    ],
-                                  ),
-                                  child: ListTile(
-                                    onTap: () => Navigator.of(context)
-                                        .push(_createRoute(item.id, item.name)),
-                                    // onTap: () => Navigator.of(context)
-                                    //     .push(MaterialPageRoute(
-                                    //         builder: (context) => TaskPage(
-                                    //               title: item.name,
-                                    //             ))),
-                                    title: Text(item.name),
-                                    subtitle: Text(item.description),
-                                  ),
-                                );
-                              },
-                            ),
-                    );
-                  },
-                  errorWidgetBuilder: (context, error) => EmptyState(
-                    message: 'Fail to get tasks',
-                    onTryAgainTap: () => bloc.onTryAgain.add(null),
-                  ),
-                ),
-              );
-            });
+    return ActionHandler<TaskListAction>(
+      actionStream: bloc.onNewAction,
+      onReceived: (action) {
+        if (action is SuccessOnCreateTask) {
+          displaySnackBar(context, 'Task created successfully!');
+        } else if (action is FailOnCreateTask) {
+          displaySnackBar(context, 'Fail on create Task!');
+        } else if (action is SuccessOnDeleteTask) {
+          displaySnackBar(context, 'Task deleted!');
+        } else if (action is FailOnDeleteTask) {
+          displaySnackBar(context, 'Fail on delete Task!');
+        } else if (action is SuccessOnEditTask) {
+          displaySnackBar(context, 'Task edited successfully!');
+        } else if (action is FailOnEditTask) {
+          displaySnackBar(context, 'Fail on edit Task!');
+        }
       },
+      child: Navigator(
+        key: navigatorKey,
+        onGenerateRoute: (settings) {
+          return MaterialPageRoute(
+              settings: settings,
+              builder: (context) {
+                return StreamBuilder(
+                  stream: bloc.onNewState,
+                  builder: (context, snapshot) =>
+                      AsyncSnapshotResponseView<Loading, Error, Success>(
+                    snapshot: snapshot,
+                    successWidgetBuilder: (context, success) {
+                      return Scaffold(
+                        appBar: AppBar(
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                          centerTitle: true,
+                          title: Text(
+                            "Tasks",
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                        ),
+                        floatingActionButton: FloatingActionButton(
+                          onPressed: () => openModalTask(0, context),
+                          backgroundColor: Colors.indigoAccent,
+                          child: const Icon(
+                            Icons.add,
+                            color: Color.fromRGBO(217, 217, 217, 1),
+                          ),
+                        ),
+                        body: success.taskList.isEmpty
+                            ? EmptyState(
+                                message:
+                                    'Your task list is empty, add one now!',
+                                onTryAgainTap: () => bloc.onTryAgain.add(null),
+                                buttonText: 'Update',
+                                asset: 'assets/add_task.png',
+                              )
+                            : ListView.builder(
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                reverse: currentTheme.getOrderByStatus(),
+                                itemCount: success.taskList.length,
+                                itemBuilder: (context, index) {
+                                  final item = success.taskList[index];
+                                  return Slidable(
+                                    key: ValueKey<TaskSummary>(item),
+                                    endActionPane: ActionPane(
+                                      motion: const BehindMotion(),
+                                      children: [
+                                        SlidableAction(
+                                          onPressed: (context) => openModalTask(
+                                            1,
+                                            context,
+                                            task: item,
+                                          ),
+                                          backgroundColor: Colors.indigo,
+                                          foregroundColor: Colors.white,
+                                          icon: Icons.edit,
+                                          label: 'Edit',
+                                        ),
+                                        SlidableAction(
+                                          onPressed: (_) =>
+                                              bloc.onDeleteTask.add(item.id),
+                                          backgroundColor: Colors.red,
+                                          foregroundColor: Colors.white,
+                                          icon: Icons.delete,
+                                          label: 'Delete',
+                                        ),
+                                      ],
+                                    ),
+                                    child: ListTile(
+                                      onTap: () => Navigator.of(context).push(
+                                          _createRoute(item.id, item.name)),
+                                      title: Text(item.name),
+                                      subtitle: Text(item.description),
+                                    ),
+                                  );
+                                },
+                              ),
+                      );
+                    },
+                    errorWidgetBuilder: (context, error) => EmptyState(
+                      message: 'Fail to get tasks',
+                      onTryAgainTap: () => bloc.onTryAgain.add(null),
+                    ),
+                  ),
+                );
+              });
+        },
+      ),
     );
   }
 

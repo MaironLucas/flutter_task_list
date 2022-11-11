@@ -73,6 +73,7 @@ class _EditItemModalState extends State<EditItemModal> {
                       if (_nameController.text != '' &&
                           _nameController.text != ' ') {
                         widget.onEditItemTap(_nameController.text);
+                        Navigator.of(context).pop();
                       }
                     },
                     style: ButtonStyle(

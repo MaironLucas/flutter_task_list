@@ -3,8 +3,10 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_task_list/data/repository/step_repository.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
+import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/async_snapshot_response_view.dart';
 import 'package:flutter_task_list/views/common/empty_state.dart';
+import 'package:flutter_task_list/views/common/view_utils.dart';
 import 'package:flutter_task_list/views/task/task_details/task_details_bloc.dart';
 import 'package:flutter_task_list/views/task/task_details/task_details_models.dart';
 import 'package:provider/provider.dart';
@@ -76,97 +78,120 @@ class _TaskPageState extends State<TaskPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          widget.taskName,
-          style: Theme.of(context).textTheme.headlineSmall,
+    return ActionHandler<TaskDetailAction>(
+      actionStream: bloc.onNewAction,
+      onReceived: (action) {
+        if (action is SuccessOnCreateStep) {
+          displaySnackBar(context, 'Step created successfully!');
+        } else if (action is FailOnCreateStep) {
+          displaySnackBar(context, 'Fail on create Step!');
+        } else if (action is SuccessOnCompleteStep) {
+          displaySnackBar(context, 'Step state changed!');
+        } else if (action is FailOnCompleteStep) {
+          displaySnackBar(context, 'Fail on change step state!');
+        } else if (action is SuccessOnDeleteStep) {
+          displaySnackBar(context, 'Step is deleted!');
+        } else if (action is FailOnDeleteStep) {
+          displaySnackBar(context, 'Fail on delete Step!');
+        } else if (action is SuccessOnEditStep) {
+          displaySnackBar(context, 'Step name idited successfully!');
+        } else if (action is FailOnCompleteStep) {
+          displaySnackBar(context, 'Fail on edit Step name!');
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: true,
+          title: Text(
+            widget.taskName,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => openModalItem(0, '', context),
-        backgroundColor: Colors.indigoAccent,
-        child: const Icon(
-          Icons.add,
-          color: Color.fromRGBO(217, 217, 217, 1),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => openModalItem(0, '', context),
+          backgroundColor: Colors.indigoAccent,
+          child: const Icon(
+            Icons.add,
+            color: Color.fromRGBO(217, 217, 217, 1),
+          ),
         ),
-      ),
-      body: StreamBuilder(
-        stream: bloc.onNewState,
-        builder: (_, snapshot) =>
-            AsyncSnapshotResponseView<Loading, Error, Success>(
-          snapshot: snapshot,
-          successWidgetBuilder: (_, success) => success.task.steps.isEmpty
-              ? EmptyState(
-                  message: 'This task doesnt have steps yet, add one now!',
-                  onTryAgainTap: () => bloc.onTryAgain.add(null),
-                  buttonText: 'Update',
-                  asset: 'assets/add_task.png',
-                )
-              : ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: success.task.steps.length,
-                  itemBuilder: (context, index) {
-                    final item = success.task.steps[index];
-                    return TextButton(
-                      onPressed: () => bloc.onCompleteStep.add(
-                        CompleteStepInput(
-                          id: item.id,
-                          state: !item.isConcluded,
+        body: StreamBuilder(
+          stream: bloc.onNewState,
+          builder: (_, snapshot) =>
+              AsyncSnapshotResponseView<Loading, Error, Success>(
+            snapshot: snapshot,
+            successWidgetBuilder: (_, success) => success.task.steps.isEmpty
+                ? EmptyState(
+                    message: 'This task doesnt have steps yet, add one now!',
+                    onTryAgainTap: () => bloc.onTryAgain.add(null),
+                    buttonText: 'Update',
+                    asset: 'assets/add_task.png',
+                  )
+                : ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: success.task.steps.length,
+                    itemBuilder: (context, index) {
+                      final item = success.task.steps[index];
+                      return TextButton(
+                        onPressed: () => bloc.onCompleteStep.add(
+                          CompleteStepInput(
+                            id: item.id,
+                            state: !item.isConcluded,
+                          ),
                         ),
-                      ),
-                      child: Slidable(
-                        key: ValueKey<String>(lista[index]),
-                        endActionPane: ActionPane(
-                          motion: const BehindMotion(),
-                          children: [
-                            SlidableAction(
-                              onPressed: (context) => bloc.onCompleteStep.add(
-                                CompleteStepInput(
-                                  id: item.id,
-                                  state: !item.isConcluded,
+                        child: Slidable(
+                          key: ValueKey<String>(item.id),
+                          endActionPane: ActionPane(
+                            motion: const BehindMotion(),
+                            children: [
+                              SlidableAction(
+                                onPressed: (context) => bloc.onCompleteStep.add(
+                                  CompleteStepInput(
+                                    id: item.id,
+                                    state: !item.isConcluded,
+                                  ),
                                 ),
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                                icon: Icons.check,
                               ),
-                              backgroundColor: Colors.green,
-                              foregroundColor: Colors.white,
-                              icon: Icons.check,
-                            ),
-                            SlidableAction(
-                              onPressed: (context) => openModalItem(
-                                1,
-                                item.title,
-                                context,
-                                stepId: item.id,
+                              SlidableAction(
+                                onPressed: (context) => openModalItem(
+                                  1,
+                                  item.title,
+                                  context,
+                                  stepId: item.id,
+                                ),
+                                backgroundColor: Colors.indigo,
+                                foregroundColor: Colors.white,
+                                icon: Icons.edit,
                               ),
-                              backgroundColor: Colors.indigo,
-                              foregroundColor: Colors.white,
-                              icon: Icons.edit,
-                            ),
-                            SlidableAction(
-                              onPressed: (_) => bloc.onDeleteStep.add(item.id),
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              icon: Icons.delete,
-                            ),
-                          ],
+                              SlidableAction(
+                                onPressed: (_) =>
+                                    bloc.onDeleteStep.add(item.id),
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                                icon: Icons.delete,
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
+                            tileColor: item.isConcluded
+                                ? Colors.blue
+                                : Colors.transparent,
+                            title: Text(item.title),
+                          ),
                         ),
-                        child: ListTile(
-                          tileColor: item.isConcluded
-                              ? Colors.blue
-                              : Colors.transparent,
-                          title: Text(item.title),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-          errorWidgetBuilder: (context, error) => EmptyState(
-            message: 'Fail to get steps',
-            onTryAgainTap: () => bloc.onTryAgain.add(null),
+                      );
+                    },
+                  ),
+            errorWidgetBuilder: (context, error) => EmptyState(
+              message: 'Fail to get steps',
+              onTryAgainTap: () => bloc.onTryAgain.add(null),
+            ),
           ),
         ),
       ),

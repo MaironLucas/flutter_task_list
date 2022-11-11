@@ -70,6 +70,7 @@ class _CreateItemModalState extends State<CreateItemModal> {
                             name: _nameController.text,
                           ),
                         );
+                        Navigator.of(context).pop();
                       }
                     },
                     style: ButtonStyle(

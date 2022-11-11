@@ -6,17 +6,21 @@ import 'package:flutter/material.dart';
 MyTheme currentTheme = MyTheme();
 
 ThemeData dark = ThemeData(
-    brightness: Brightness.dark,
-    hintColor: const Color.fromARGB(255, 80, 80, 80),
-    fontFamily: "Inter",
-    textTheme: const TextTheme(
-        headlineSmall: TextStyle(fontSize: 20),
-        labelSmall: TextStyle(fontSize: 13)));
+  brightness: Brightness.dark,
+  hintColor: const Color.fromARGB(255, 80, 80, 80),
+  fontFamily: "Inter",
+  textTheme: const TextTheme(
+    headlineSmall: TextStyle(fontSize: 20),
+    labelSmall: TextStyle(fontSize: 13),
+  ),
+);
 
 ThemeData light = ThemeData(
-    brightness: Brightness.light,
-    hintColor: const Color.fromARGB(255, 80, 80, 80),
-    fontFamily: "Inter",
-    textTheme: const TextTheme(
-        headlineSmall: TextStyle(fontSize: 20),
-        labelSmall: TextStyle(fontSize: 13)));
+  brightness: Brightness.light,
+  hintColor: const Color.fromARGB(255, 80, 80, 80),
+  fontFamily: "Inter",
+  textTheme: const TextTheme(
+    headlineSmall: TextStyle(fontSize: 20),
+    labelSmall: TextStyle(fontSize: 13),
+  ),
+);

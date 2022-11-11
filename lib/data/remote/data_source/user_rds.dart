@@ -61,7 +61,7 @@ class UserRds {
   }
 
   Future<void> updateUserName(String name) async {
-    user.updateDisplayName(name);
+    await user.updateDisplayName(name);
   }
 
   Future<void> updateUserEmail(String email) async {
@@ -69,6 +69,21 @@ class UserRds {
   }
 
   Future<void> updateUserPassword(String newPassword) async {
-    user.updatePassword(newPassword);
+    try {
+      await user.updatePassword(newPassword);
+    } catch (e) {
+      if (e is FirebaseAuthException) {
+        if (e.code == 'weak-password') {
+          throw WeakPasswordException();
+        }
+        if (e.code == 'requires-recent-login') {
+          FirebaseAuth.instance.signOut();
+          throw UserNeedsLoginException();
+        }
+      }
+      throw InternalException();
+    }
   }
+
+  Future<void> signOut() async => firebaseAuth.signOut();
 }

@@ -38,22 +38,20 @@ class UserRepository {
   Future<void> signInUser(String email, String password) =>
       userRds.signInUser(email, password);
 
+  Future<void> signOut() => userRds.signOut();
+
   Future<void> signUpUser(String name, String email, String password) =>
       userRds.signUpUser(name, email, password);
 
   Future<void> changeUserInfo(
     String? name,
-    String? email,
     String? password,
   ) async {
     if (name != null) {
-      userRds.updateUserName(name);
-    }
-    if (email != null) {
-      userRds.updateUserEmail(email);
+      await userRds.updateUserName(name);
     }
     if (password != null) {
-      userRds.updateUserPassword(password);
+      await userRds.updateUserPassword(password);
     }
   }
 

@@ -108,9 +108,10 @@ class _EditTaskModalState extends State<EditTaskModal> {
                           TaskSummary(
                             id: widget.task.id,
                             name: _nameController.text,
-                            description: _descriptionController.text,
+                            description: _descriptionController.text.trim(),
                           ),
                         );
+                        Navigator.of(context).pop();
                       }
                     },
                     style: ButtonStyle(

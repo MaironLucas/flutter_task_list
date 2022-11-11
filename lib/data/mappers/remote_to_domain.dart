@@ -1,6 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_task_list/data/model/step.dart';
-import 'package:flutter_task_list/data/model/task.dart';
 import 'package:flutter_task_list/data/model/task_summary.dart';
 
 extension TaskSummaryListRMtoDM on DataSnapshot {
@@ -16,12 +15,12 @@ extension TaskSummaryListRMtoDM on DataSnapshot {
         ),
       );
     });
+    taskList.sort((a, b) => a.name.compareTo(b.name));
     return taskList;
   }
 }
 
 extension TaskSummaryRMtoDM on DataSnapshot {
-  /// falta implementar ainda
   TaskSummary toTaskSummaryDM() {
     return TaskSummary(
       id: '',
@@ -44,6 +43,7 @@ extension StepListRMtoDM on DataSnapshot {
         ),
       ),
     );
+    stepList.sort((a, b) => a.title.compareTo(b.title));
     return stepList;
   }
 }
