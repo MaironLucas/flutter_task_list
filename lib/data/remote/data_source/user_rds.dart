@@ -64,7 +64,7 @@ class UserRds {
     user.updateDisplayName(name);
   }
 
-  Future<void> updateUserEmaik(String email) async {
+  Future<void> updateUserEmail(String email) async {
     user.updateEmail(email);
   }
 

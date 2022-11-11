@@ -3,8 +3,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_task_list/data/data_observables.dart';
 import 'package:flutter_task_list/data/login_state_handler.dart';
+import 'package:flutter_task_list/data/remote/data_source/step_rds.dart';
 import 'package:flutter_task_list/data/remote/data_source/task_rds.dart';
 import 'package:flutter_task_list/data/remote/data_source/user_rds.dart';
+import 'package:flutter_task_list/data/repository/step_repository.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:provider/provider.dart';
@@ -73,6 +75,9 @@ class _TslGeneralProviderState extends State<TslGeneralProvider> {
             database: database,
           ),
         ),
+        ProxyProvider<DatabaseReference, StepRds>(
+          update: (_, database, __) => StepRds(database: database),
+        ),
       ];
 
   List<SingleChildWidget> repositoryProviders() => [
@@ -85,6 +90,9 @@ class _TslGeneralProviderState extends State<TslGeneralProvider> {
           update: (_, taskRds, __) => TaskRepository(
             taskRds: taskRds,
           ),
+        ),
+        ProxyProvider<StepRds, StepRepository>(
+          update: (_, stepRds, __) => StepRepository(stepRds: stepRds),
         ),
       ];
 

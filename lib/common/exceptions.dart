@@ -13,3 +13,5 @@ class UnknownStateTypeException extends TaskListExceptions {}
 class UserDoesntHaveTaskException extends TaskListExceptions {}
 
 class UnauthenticatedUserException extends TaskListExceptions {}
+
+class TaskDoesntHaveStepsException extends TaskListExceptions {}

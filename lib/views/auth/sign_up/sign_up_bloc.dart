@@ -157,5 +157,6 @@ class SignUpBloc with SubscriptionHolder {
     _onPasswordValueChangedSubject.close();
     _onEmailValueChangedSubject.close();
     _onSubmitButtonClickSubject.close();
+    disposeAll();
   }
 }
