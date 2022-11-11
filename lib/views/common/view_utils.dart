@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 enum InputStatus { valid, invalid, empty, error }
 
+enum OrderBy { ascending, descending }
+
 void displaySnackBar(
   BuildContext context,
   String text, {

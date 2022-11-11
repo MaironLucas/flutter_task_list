@@ -1,5 +1,6 @@
 import 'package:flutter_task_list/data/model/step.dart';
 import 'package:flutter_task_list/data/remote/data_source/step_rds.dart';
+import 'package:flutter_task_list/views/common/view_utils.dart';
 
 class StepRepository {
   StepRepository({
@@ -8,10 +9,12 @@ class StepRepository {
 
   final StepRds stepRds;
 
-  Future<List<Step>> getStepList(String userId, String taskId) =>
+  Future<List<Step>> getStepList(
+          String userId, String taskId, OrderBy orderBy) =>
       stepRds.getStepList(
         userId,
         taskId,
+        orderBy,
       );
 
   Future<void> addStep(String userId, String taskId, String stepTitle) =>

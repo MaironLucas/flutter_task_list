@@ -123,7 +123,6 @@ class TaskListPage extends StatelessWidget {
                             : ListView.builder(
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
-                                reverse: currentTheme.getOrderByStatus(),
                                 itemCount: success.taskList.length,
                                 itemBuilder: (context, index) {
                                   final item = success.taskList[index];

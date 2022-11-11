@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_task_list/common/exceptions.dart';
 import 'package:flutter_task_list/data/mappers/remote_to_domain.dart';
 import 'package:flutter_task_list/data/model/task_summary.dart';
+import 'package:flutter_task_list/views/common/view_utils.dart';
 
 class TaskRds {
   TaskRds({
@@ -40,11 +40,11 @@ class TaskRds {
     newRef.child(taskId).remove();
   }
 
-  Future<List<TaskSummary>> getTasks(String userId) async {
+  Future<List<TaskSummary>> getTasks(String userId, OrderBy orderBy) async {
     final newRef = database.child('$userId/tasks');
     final snapshot = await newRef.get();
     if (snapshot.exists) {
-      return snapshot.toTaskList();
+      return snapshot.toTaskList(orderBy);
     } else {
       throw UserDoesntHaveTaskException();
     }

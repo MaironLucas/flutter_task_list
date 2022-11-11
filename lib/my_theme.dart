@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/views/common/view_utils.dart';
 
 class MyTheme with ChangeNotifier {
   static bool _isDark = true;
 
-  String? orderBy = "Ascending";
+  OrderBy orderBy = OrderBy.ascending;
   String? fontSizeLabel = "Medium";
   num fontSize = 2;
 
@@ -11,7 +12,7 @@ class MyTheme with ChangeNotifier {
     return _isDark ? ThemeMode.dark : ThemeMode.light;
   }
 
-  void switchOrderBy(String? od) {
+  void switchOrderBy(OrderBy od) {
     orderBy = od;
     notifyListeners();
   }
@@ -37,16 +38,8 @@ class MyTheme with ChangeNotifier {
     notifyListeners();
   }
 
-  String? getOrderBy() {
+  OrderBy getOrderBy() {
     return orderBy;
-  }
-
-  bool getOrderByStatus() {
-    if (orderBy == "Ascending") {
-      return false;
-    } else {
-      return true;
-    }
   }
 
   String? getFontSizeLabel() {

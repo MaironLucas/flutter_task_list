@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_task_list/common/exceptions.dart';
 import 'package:flutter_task_list/data/mappers/remote_to_domain.dart';
 import 'package:flutter_task_list/data/model/step.dart';
+import 'package:flutter_task_list/views/common/view_utils.dart';
 
 class StepRds {
   StepRds({
@@ -13,11 +14,12 @@ class StepRds {
   static const String _stepTitle = 'title';
   static const String _stepState = 'isConcluded';
 
-  Future<List<Step>> getStepList(String userId, String taskId) async {
+  Future<List<Step>> getStepList(
+      String userId, String taskId, OrderBy orderBy) async {
     final newRef = database.child('$userId/tasks/$taskId/steps');
     final snapshot = await newRef.get();
     if (snapshot.exists) {
-      return snapshot.toStepList();
+      return snapshot.toStepList(orderBy);
     } else {
       throw TaskDoesntHaveStepsException();
     }

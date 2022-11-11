@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/auth/auth_view.dart';
 import 'package:flutter_task_list/views/common/async_snapshot_response_view.dart';
+import 'package:flutter_task_list/views/common/view_utils.dart';
 import 'package:flutter_task_list/views/settings/modal/edit_user_modal.dart';
 import 'package:flutter_task_list/views/settings/settings_bloc.dart';
 import 'package:flutter_task_list/views/settings/settings_models.dart';
@@ -105,7 +106,10 @@ class _SettingsPageState extends State<SettingsPage> {
                               SizedBox(
                                 width: 120,
                                 child: DropdownButton<String>(
-                                  value: currentTheme.getOrderBy(),
+                                  value: currentTheme.getOrderBy() ==
+                                          OrderBy.ascending
+                                      ? orderByList[0]
+                                      : orderByList[1],
                                   icon: const Material(),
                                   elevation: 16,
                                   style: Theme.of(context).textTheme.labelSmall,
@@ -114,7 +118,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                     color: Colors.indigoAccent,
                                   ),
                                   onChanged: (String? value) {
-                                    currentTheme.switchOrderBy(value);
+                                    if (value == orderByList[0]) {
+                                      currentTheme
+                                          .switchOrderBy(OrderBy.ascending);
+                                    } else if (value == orderByList[1]) {
+                                      currentTheme
+                                          .switchOrderBy(OrderBy.descending);
+                                    }
                                   },
                                   items: orderByList
                                       .map<DropdownMenuItem<String>>(

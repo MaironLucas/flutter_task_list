@@ -1,9 +1,10 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_task_list/data/model/step.dart';
 import 'package:flutter_task_list/data/model/task_summary.dart';
+import 'package:flutter_task_list/views/common/view_utils.dart';
 
 extension TaskSummaryListRMtoDM on DataSnapshot {
-  List<TaskSummary> toTaskList() {
+  List<TaskSummary> toTaskList(OrderBy orderBy) {
     var taskList = <TaskSummary>[];
     final map = value as Map<dynamic, dynamic>;
     map.forEach((id, value) {
@@ -15,7 +16,9 @@ extension TaskSummaryListRMtoDM on DataSnapshot {
         ),
       );
     });
-    taskList.sort((a, b) => a.name.compareTo(b.name));
+    taskList.sort(orderBy == OrderBy.descending
+        ? (a, b) => a.name.compareTo(b.name)
+        : (a, b) => b.name.compareTo(a.name));
     return taskList;
   }
 }
@@ -31,7 +34,7 @@ extension TaskSummaryRMtoDM on DataSnapshot {
 }
 
 extension StepListRMtoDM on DataSnapshot {
-  List<Step> toStepList() {
+  List<Step> toStepList(OrderBy orderBy) {
     var stepList = <Step>[];
     final map = value as Map<dynamic, dynamic>;
     map.forEach(
@@ -43,7 +46,9 @@ extension StepListRMtoDM on DataSnapshot {
         ),
       ),
     );
-    stepList.sort((a, b) => a.title.compareTo(b.title));
+    stepList.sort(orderBy == OrderBy.descending
+        ? (a, b) => a.title.compareTo(b.title)
+        : (a, b) => b.title.compareTo(a.title));
     return stepList;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter_task_list/common/exceptions.dart';
 import 'package:flutter_task_list/common/subscription_holder.dart';
+import 'package:flutter_task_list/config.dart';
 import 'package:flutter_task_list/data/model/task_summary.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
@@ -62,10 +63,12 @@ class TaskListBloc with SubscriptionHolder {
   Sink<void> get onTryAgain => _onTryAgainSubject.sink;
 
   Stream<TaskListState> _fetchTaskList() async* {
+    final orderBy = currentTheme.getOrderBy();
     yield Loading();
     try {
       var taskList = await taskRepository.getTasks(
         userRepository.getUser().uid,
+        orderBy,
       );
       yield Success(taskList: taskList);
     } catch (error) {

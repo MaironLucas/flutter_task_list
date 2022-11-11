@@ -1,4 +1,5 @@
 import 'package:flutter_task_list/common/subscription_holder.dart';
+import 'package:flutter_task_list/config.dart';
 import 'package:flutter_task_list/data/model/task.dart';
 import 'package:flutter_task_list/data/repository/step_repository.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
@@ -75,8 +76,13 @@ class TaskDetailsBloc with SubscriptionHolder {
     try {
       final user = userRepository.getUser();
       final taskSummary = await taskRepository.getTaskSummary(user.uid, taskId);
+      final orderBy = currentTheme.getOrderBy();
       try {
-        final stepList = await stepRepository.getStepList(user.uid, taskId);
+        final stepList = await stepRepository.getStepList(
+          user.uid,
+          taskId,
+          orderBy,
+        );
         yield Success(
           task: Task(
             id: taskSummary.id,
