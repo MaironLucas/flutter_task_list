@@ -130,6 +130,7 @@ class _SignInWidgetState extends State<SignInWidget> {
                             onChanged: (password) =>
                                 bloc.onPasswordValueChanged.add(password),
                             statusStream: bloc.onPasswordInputStatusChanged,
+                            obscureText: true,
                           ),
                         ],
                       ),

@@ -134,6 +134,7 @@ class SignUpWidget extends StatelessWidget {
                             onChanged: (password) =>
                                 bloc.onPasswordValueChanged.add(password),
                             statusStream: bloc.onPasswordInputStatusChanged,
+                            obscureText: true,
                           ),
                           TslFormField(
                             hintText: 'Password Confirmation',
@@ -145,6 +146,7 @@ class SignUpWidget extends StatelessWidget {
                                 .add(password),
                             statusStream:
                                 bloc.onPasswordConfirmationInputStatusChanged,
+                            obscureText: true,
                           ),
                         ],
                       ),

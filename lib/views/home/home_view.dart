@@ -6,8 +6,6 @@ import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/view_utils.dart';
 import 'package:flutter_task_list/views/home/home_bloc.dart';
 import 'package:flutter_task_list/views/home/home_model.dart';
-import 'package:flutter_task_list/views/home/modal/create_task_modal.dart';
-import 'package:flutter_task_list/views/home/modal/edit_task_modal.dart';
 import 'package:flutter_task_list/views/settings/settings_page.dart';
 import 'package:flutter_task_list/views/task/list/task_list_page.dart';
 import 'package:provider/provider.dart';
@@ -64,29 +62,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void openModalTask(int action, String? title, String? description) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          child: action == 0
-              ? CreateTaskModal(
-                  onCreateTaskTap: (TaskInput input) {
-                    return widget.bloc.onCreateTaskTap.add(input);
-                  },
-                )
-              : EditTaskModal(
-                  onEditTaskTap: (TaskInput input) {
-                    return widget.bloc.onEditTaskTap.add(input);
-                  },
-                  title: title!,
-                  description: description!,
-                ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return ActionHandler<HomeAction>(
@@ -109,20 +84,10 @@ class _HomePageState extends State<HomePage> {
               controller: pc,
               onPageChanged: setCurrentPage,
               children: [
-                TaskListPage.create(navigatorKeys[0]!, openModalTask),
+                TaskListPage.create(navigatorKeys[0]!),
                 SettingsPage.create(),
               ],
             ),
-            floatingActionButton: _selectedIndex == 0
-                ? FloatingActionButton(
-                    onPressed: () => openModalTask(0, '', ''),
-                    backgroundColor: Colors.indigoAccent,
-                    child: const Icon(
-                      Icons.add,
-                      color: Color.fromRGBO(217, 217, 217, 1),
-                    ),
-                  )
-                : const Material(),
             bottomNavigationBar: BottomNavigationBar(
               showSelectedLabels: false,
               showUnselectedLabels: false,

@@ -73,6 +73,9 @@ class _EditUserModalState extends State<EditUserModal> {
                       ),
                     ),
                     TextFormField(
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
                       controller: _passwordController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -99,6 +102,9 @@ class _EditUserModalState extends State<EditUserModal> {
                       ),
                     ),
                     TextFormField(
+                      obscureText: true,
+                      enableSuggestions: false,
+                      autocorrect: false,
                       controller: _passwordController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(

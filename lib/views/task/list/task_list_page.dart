@@ -11,18 +11,18 @@ import 'package:flutter_task_list/views/task/list/task_list_models.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
+import '../../home/home_model.dart';
+import 'modal/create_task_modal.dart';
+import 'modal/edit_task_modal.dart';
+
 class TaskListPage extends StatelessWidget {
   const TaskListPage(
-      {super.key,
-      required this.bloc,
-      required this.navigatorKey,
-      required this.openModalTask});
+      {super.key, required this.bloc, required this.navigatorKey});
 
   final TaskListBloc bloc;
-  final Function openModalTask;
   final GlobalKey navigatorKey;
 
-  static Widget create(GlobalKey navigatorKey, Function openModalTask) =>
+  static Widget create(GlobalKey navigatorKey) =>
       ProxyProvider2<TaskRepository, TaskListUpdateStreamWrapper, TaskListBloc>(
         update: (_, taskRepository, taskListUpdateStreamWrapper, __) =>
             TaskListBloc(
@@ -33,10 +33,33 @@ class TaskListPage extends StatelessWidget {
           builder: (_, bloc, __) => TaskListPage(
             bloc: bloc,
             navigatorKey: navigatorKey,
-            openModalTask: openModalTask,
           ),
         ),
       );
+
+  void openModalTask(
+      int op, String? title, String? description, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: op == 0
+              ? CreateTaskModal(
+                  onCreateTaskTap: (TaskInput input) {
+                    return null;
+                  },
+                )
+              : EditTaskModal(
+                  onEditTaskTap: (TaskInput input) {
+                    null;
+                  },
+                  title: title!,
+                  description: description!,
+                ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +85,14 @@ class TaskListPage extends StatelessWidget {
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                       ),
+                      floatingActionButton: FloatingActionButton(
+                        onPressed: () => openModalTask(0, '', '', context),
+                        backgroundColor: Colors.indigoAccent,
+                        child: const Icon(
+                          Icons.add,
+                          color: Color.fromRGBO(217, 217, 217, 1),
+                        ),
+                      ),
                       body: success.taskList.isEmpty
                           ? EmptyState(
                               message: 'Your task list is empty, add one now!',
@@ -85,7 +116,10 @@ class TaskListPage extends StatelessWidget {
                                     children: [
                                       SlidableAction(
                                         onPressed: (context) => openModalTask(
-                                            1, item.name, item.description),
+                                            1,
+                                            item.name,
+                                            item.description,
+                                            context),
                                         backgroundColor: Colors.indigo,
                                         foregroundColor: Colors.white,
                                         icon: Icons.edit,

@@ -9,6 +9,7 @@ class TslFormField extends StatelessWidget {
     required this.statusStream,
     this.emptyFormMessage,
     this.invalidFormMessage,
+    this.obscureText,
     Key? key,
   }) : super(key: key);
 
@@ -17,6 +18,7 @@ class TslFormField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final String? emptyFormMessage;
   final String? invalidFormMessage;
+  final bool? obscureText;
 
   final Stream<InputStatus> statusStream;
 
@@ -33,6 +35,9 @@ class TslFormField extends StatelessWidget {
             child: TextFormField(
               cursorColor: const Color.fromRGBO(49, 45, 84, 1),
               controller: textController,
+              obscureText: obscureText == true ? true : false,
+              enableSuggestions: obscureText == true ? false : true,
+              autocorrect: obscureText == true ? false : true,
               onChanged: onChanged,
               style: const TextStyle(fontSize: 13, color: Colors.black),
               decoration: InputDecoration(

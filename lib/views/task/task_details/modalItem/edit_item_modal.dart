@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_task_list/views/home/home_model.dart';
 
-class EditTaskModal extends StatefulWidget {
-  const EditTaskModal({
-    required this.onEditTaskTap,
+class EditItemModal extends StatefulWidget {
+  const EditItemModal({
+    required this.onEditItemTap,
     required this.title,
-    required this.description,
     super.key,
   });
 
-  final Function(TaskInput input) onEditTaskTap;
+  final Function(TaskInput input) onEditItemTap;
   final String title;
-  final String description;
 
   @override
-  State<EditTaskModal> createState() => _EditTaskModalState();
+  State<EditItemModal> createState() => _EditItemModalState();
 }
 
-class _EditTaskModalState extends State<EditTaskModal> {
+class _EditItemModalState extends State<EditItemModal> {
   final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
 
   @override
   void initState() {
     _nameController.text = widget.title;
-    _descriptionController.text = widget.description;
     super.initState();
   }
 
@@ -45,7 +41,7 @@ class _EditTaskModalState extends State<EditTaskModal> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  const Text("Edit Task"),
+                  const Text("Edit Item"),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -73,42 +69,11 @@ class _EditTaskModalState extends State<EditTaskModal> {
                       )
                     ],
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(
-                        height: 30,
-                        child: Text(
-                          'Description',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 15),
-                        ),
-                      ),
-                      TextFormField(
-                        controller: _descriptionController,
-                        decoration: InputDecoration(
-                          hintText: 'Enter Task description',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: const BorderSide(
-                              color: Color.fromRGBO(217, 217, 217, 1),
-                              width: 1,
-                              style: BorderStyle.solid,
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
                   TextButton(
                     onPressed: () {
                       if (_nameController.text != '' &&
                           _nameController.text != ' ') {
-                        widget.onEditTaskTap(
-                          TaskInput(
-                              name: _nameController.text,
-                              description: _descriptionController.text),
-                        );
+                        null;
                       }
                     },
                     style: ButtonStyle(
