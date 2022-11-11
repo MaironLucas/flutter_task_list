@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_task_list/views/home/home_model.dart';
+import 'package:flutter_task_list/views/task/list/task_list_models.dart';
 
 class CreateTaskModal extends StatefulWidget {
   const CreateTaskModal({

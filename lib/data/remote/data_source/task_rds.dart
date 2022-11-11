@@ -14,9 +14,10 @@ class TaskRds {
   static const String _taskName = "name";
   static const String _taskDescription = "description";
 
-  Future<void> createTask(User user, String name, String description) async {
+  Future<void> createTask(
+      String userId, String name, String description) async {
     try {
-      final newRef = database.child('${user.uid}/tasks');
+      final newRef = database.child('$userId/tasks');
       await newRef.push().update({
         _taskName: name,
         _taskDescription: description,
@@ -24,8 +25,8 @@ class TaskRds {
     } catch (error) {}
   }
 
-  Future<void> updateTask(User user, TaskSummary task) async {
-    final newRef = database.child('${user.uid}/tasks');
+  Future<void> updateTask(String userId, TaskSummary task) async {
+    final newRef = database.child('$userId/tasks');
     await newRef.update({
       task.id: {
         _taskName: task.name,
@@ -34,13 +35,13 @@ class TaskRds {
     });
   }
 
-  Future<void> deleteTask(User user, TaskSummary task) async {
-    final newRef = database.child('${user.uid}/tasks');
-    newRef.child(task.id).remove();
+  Future<void> deleteTask(String userId, String taskId) async {
+    final newRef = database.child('$userId/tasks');
+    newRef.child(taskId).remove();
   }
 
-  Future<List<TaskSummary>> getTasks(User user) async {
-    final newRef = database.child('${user.uid}/tasks');
+  Future<List<TaskSummary>> getTasks(String userId) async {
+    final newRef = database.child('$userId/tasks');
     final snapshot = await newRef.get();
     if (snapshot.exists) {
       return snapshot.toTaskList();
@@ -49,8 +50,8 @@ class TaskRds {
     }
   }
 
-  Future<TaskSummary> getTaskSummary(User user, String taskId) async {
-    final newRef = database.child('${user.uid}/tasks/$taskId');
+  Future<TaskSummary> getTaskSummary(String userId, String taskId) async {
+    final newRef = database.child('$userId/tasks/$taskId');
     final snapshot = await newRef.get();
     if (snapshot.exists) {
       return snapshot.toTaskSummaryDM();

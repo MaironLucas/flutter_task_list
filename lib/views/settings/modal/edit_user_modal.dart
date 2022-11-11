@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_task_list/views/home/home_model.dart';
 
 class EditUserModal extends StatefulWidget {
   const EditUserModal({super.key, required this.name});

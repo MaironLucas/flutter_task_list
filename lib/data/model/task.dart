@@ -5,11 +5,11 @@ class Task {
     required this.id,
     required this.name,
     required this.description,
-    this.steps,
+    required this.steps,
   });
 
   final String id;
   final String name;
   final String description;
-  final List<Step>? steps;
+  final List<Step> steps;
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_task_list/views/home/home_model.dart';
 
 class EditItemModal extends StatefulWidget {
   const EditItemModal({
@@ -8,7 +7,7 @@ class EditItemModal extends StatefulWidget {
     super.key,
   });
 
-  final Function(TaskInput input) onEditItemTap;
+  final Function(String name) onEditItemTap;
   final String title;
 
   @override
@@ -56,7 +55,7 @@ class _EditItemModalState extends State<EditItemModal> {
                       TextFormField(
                         controller: _nameController,
                         decoration: InputDecoration(
-                          hintText: 'Enter Task title',
+                          hintText: 'Enter Step title',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: const BorderSide(
@@ -73,7 +72,7 @@ class _EditItemModalState extends State<EditItemModal> {
                     onPressed: () {
                       if (_nameController.text != '' &&
                           _nameController.text != ' ') {
-                        null;
+                        widget.onEditItemTap(_nameController.text);
                       }
                     },
                     style: ButtonStyle(

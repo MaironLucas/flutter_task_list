@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_task_list/views/home/home_model.dart';
+import 'package:flutter_task_list/views/task/task_details/task_details_models.dart';
 
 class CreateItemModal extends StatefulWidget {
   const CreateItemModal({
@@ -7,7 +7,7 @@ class CreateItemModal extends StatefulWidget {
     super.key,
   });
 
-  final Function(TaskInput input) onCreateItemTap;
+  final Function(CreateStepInput input) onCreateItemTap;
 
   @override
   State<CreateItemModal> createState() => _CreateItemModalState();
@@ -33,14 +33,14 @@ class _CreateItemModalState extends State<CreateItemModal> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  const Text("Add Item"),
+                  const Text("Add Step"),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(
                         height: 30,
                         child: Text(
-                          'Title',
+                          'Name',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 15),
                         ),
@@ -48,7 +48,7 @@ class _CreateItemModalState extends State<CreateItemModal> {
                       TextFormField(
                         controller: _nameController,
                         decoration: InputDecoration(
-                          hintText: 'Enter Task title',
+                          hintText: 'Enter Step name',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: const BorderSide(
@@ -65,7 +65,11 @@ class _CreateItemModalState extends State<CreateItemModal> {
                     onPressed: () {
                       if (_nameController.text != '' &&
                           _nameController.text != ' ') {
-                        null;
+                        widget.onCreateItemTap(
+                          CreateStepInput(
+                            name: _nameController.text,
+                          ),
+                        );
                       }
                     },
                     style: ButtonStyle(

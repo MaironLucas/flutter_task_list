@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_task_list/views/home/home_model.dart';
+import 'package:flutter_task_list/data/model/task_summary.dart';
 
 class EditTaskModal extends StatefulWidget {
   const EditTaskModal({
     required this.onEditTaskTap,
-    required this.title,
-    required this.description,
+    required this.task,
     super.key,
   });
 
-  final Function(TaskInput input) onEditTaskTap;
-  final String title;
-  final String description;
+  final Function(TaskSummary task) onEditTaskTap;
+  final TaskSummary task;
 
   @override
   State<EditTaskModal> createState() => _EditTaskModalState();
@@ -23,8 +21,8 @@ class _EditTaskModalState extends State<EditTaskModal> {
 
   @override
   void initState() {
-    _nameController.text = widget.title;
-    _descriptionController.text = widget.description;
+    _nameController.text = widget.task.name;
+    _descriptionController.text = widget.task.description;
     super.initState();
   }
 
@@ -107,9 +105,11 @@ class _EditTaskModalState extends State<EditTaskModal> {
                       if (_nameController.text != '' &&
                           _nameController.text != ' ') {
                         widget.onEditTaskTap(
-                          TaskInput(
-                              name: _nameController.text,
-                              description: _descriptionController.text),
+                          TaskSummary(
+                            id: widget.task.id,
+                            name: _nameController.text,
+                            description: _descriptionController.text,
+                          ),
                         );
                       }
                     },

@@ -29,4 +29,16 @@ class StepRepository {
         stepId,
         state,
       );
+
+  Future<void> updateStepName(
+          String userId, String taskId, String stepId, String name) =>
+      stepRds.updateStepName(
+        userId,
+        taskId,
+        stepId,
+        name,
+      );
+
+  Future<void> removeStep(String userId, String taskId, String stepId) =>
+      stepRds.removeStep(userId, taskId, stepId);
 }

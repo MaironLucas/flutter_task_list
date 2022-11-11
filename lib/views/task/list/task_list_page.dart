@@ -3,6 +3,7 @@ import 'package:flutter_task_list/config.dart';
 import 'package:flutter_task_list/data/data_observables.dart';
 import 'package:flutter_task_list/data/model/task_summary.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
+import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/common/async_snapshot_response_view.dart';
 import 'package:flutter_task_list/views/common/empty_state.dart';
 import 'package:flutter_task_list/views/task/task_details/task_details_page.dart';
@@ -11,7 +12,6 @@ import 'package:flutter_task_list/views/task/list/task_list_models.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
-import '../../home/home_model.dart';
 import 'modal/create_task_modal.dart';
 import 'modal/edit_task_modal.dart';
 
@@ -22,12 +22,14 @@ class TaskListPage extends StatelessWidget {
   final TaskListBloc bloc;
   final GlobalKey navigatorKey;
 
-  static Widget create(GlobalKey navigatorKey) =>
-      ProxyProvider2<TaskRepository, TaskListUpdateStreamWrapper, TaskListBloc>(
-        update: (_, taskRepository, taskListUpdateStreamWrapper, __) =>
+  static Widget create(GlobalKey navigatorKey) => ProxyProvider3<TaskRepository,
+          UserRepository, TaskListUpdateStreamWrapper, TaskListBloc>(
+        update: (_, taskRepository, userRepository, taskListUpdateStreamWrapper,
+                __) =>
             TaskListBloc(
-          taskListUpdateStream: taskListUpdateStreamWrapper.value,
+          userRepository: userRepository,
           taskRepository: taskRepository,
+          taskListUpdateStream: taskListUpdateStreamWrapper.value,
         ),
         child: Consumer<TaskListBloc>(
           builder: (_, bloc, __) => TaskListPage(
@@ -37,8 +39,7 @@ class TaskListPage extends StatelessWidget {
         ),
       );
 
-  void openModalTask(
-      int op, String? title, String? description, BuildContext context) {
+  void openModalTask(int op, BuildContext context, {TaskSummary? task}) {
     showDialog(
       context: context,
       builder: (context) {
@@ -46,15 +47,14 @@ class TaskListPage extends StatelessWidget {
           child: op == 0
               ? CreateTaskModal(
                   onCreateTaskTap: (TaskInput input) {
-                    return null;
+                    bloc.onCreateTaskTap.add(input);
                   },
                 )
               : EditTaskModal(
-                  onEditTaskTap: (TaskInput input) {
-                    null;
+                  onEditTaskTap: (TaskSummary task) {
+                    bloc.onEditTaskTap.add(task);
                   },
-                  title: title!,
-                  description: description!,
+                  task: task!,
                 ),
         );
       },
@@ -86,7 +86,7 @@ class TaskListPage extends StatelessWidget {
                         ),
                       ),
                       floatingActionButton: FloatingActionButton(
-                        onPressed: () => openModalTask(0, '', '', context),
+                        onPressed: () => openModalTask(0, context),
                         backgroundColor: Colors.indigoAccent,
                         child: const Icon(
                           Icons.add,
@@ -97,7 +97,7 @@ class TaskListPage extends StatelessWidget {
                           ? EmptyState(
                               message: 'Your task list is empty, add one now!',
                               onTryAgainTap: () => bloc.onTryAgain.add(null),
-                              buttonText: 'Atualizar',
+                              buttonText: 'Update',
                               asset: 'assets/add_task.png',
                             )
                           : ListView.builder(
@@ -116,17 +116,18 @@ class TaskListPage extends StatelessWidget {
                                     children: [
                                       SlidableAction(
                                         onPressed: (context) => openModalTask(
-                                            1,
-                                            item.name,
-                                            item.description,
-                                            context),
+                                          1,
+                                          context,
+                                          task: item,
+                                        ),
                                         backgroundColor: Colors.indigo,
                                         foregroundColor: Colors.white,
                                         icon: Icons.edit,
                                         label: 'Edit',
                                       ),
                                       SlidableAction(
-                                        onPressed: null,
+                                        onPressed: (_) =>
+                                            bloc.onDeleteTask.add(item.id),
                                         backgroundColor: Colors.red,
                                         foregroundColor: Colors.white,
                                         icon: Icons.delete,
@@ -136,7 +137,7 @@ class TaskListPage extends StatelessWidget {
                                   ),
                                   child: ListTile(
                                     onTap: () => Navigator.of(context)
-                                        .push(_createRoute(item.name)),
+                                        .push(_createRoute(item.id, item.name)),
                                     // onTap: () => Navigator.of(context)
                                     //     .push(MaterialPageRoute(
                                     //         builder: (context) => TaskPage(
@@ -163,10 +164,11 @@ class TaskListPage extends StatelessWidget {
 
   void doNothing(BuildContext context) {}
 
-  Route _createRoute(title) {
+  Route _createRoute(String taskId, String taskName) {
     return PageRouteBuilder(
-      pageBuilder: (context, animation, secondaryAnimation) => TaskPage(
-        title: title,
+      pageBuilder: (context, animation, secondaryAnimation) => TaskPage.create(
+        taskId,
+        taskName,
       ),
       transitionDuration: const Duration(seconds: 1),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {

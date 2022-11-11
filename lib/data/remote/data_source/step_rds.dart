@@ -14,7 +14,7 @@ class StepRds {
   static const String _stepState = 'isConcluded';
 
   Future<List<Step>> getStepList(String userId, String taskId) async {
-    final newRef = database.child('$userId/tasks/$taskId');
+    final newRef = database.child('$userId/tasks/$taskId/steps');
     final snapshot = await newRef.get();
     if (snapshot.exists) {
       return snapshot.toStepList();
@@ -31,15 +31,24 @@ class StepRds {
     });
   }
 
-  Future<void> removeStep(String userId, String taskId, String stepId) async {}
+  Future<void> removeStep(String userId, String taskId, String stepId) async {
+    final newRef = database.child('$userId/tasks/$taskId/steps');
+    newRef.child(stepId).remove();
+  }
 
   Future<void> updateStepState(
       String userId, String taskId, String stepId, bool state) async {
     final newRef = database.child('$userId/tasks/$taskId/steps');
-    await newRef.update({
-      stepId: {
-        _stepState: state,
-      }
+    await newRef.child(stepId).update({
+      _stepState: state,
+    });
+  }
+
+  Future<void> updateStepName(
+      String userId, String taskId, String stepId, String name) async {
+    final newRef = database.child('$userId/tasks/$taskId/steps');
+    await newRef.child(stepId).update({
+      _stepTitle: name,
     });
   }
 }
