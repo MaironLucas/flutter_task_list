@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/data/repository/user_preference_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/auth/auth_view.dart';
 import 'package:flutter_task_list/views/common/async_snapshot_response_view.dart';
@@ -18,9 +19,12 @@ class SettingsPage extends StatefulWidget {
 
   final SettingsBloc bloc;
 
-  static Widget create() => ProxyProvider<UserRepository, SettingsBloc>(
-        update: (_, userRepository, __) => SettingsBloc(
+  static Widget create() =>
+      ProxyProvider2<UserRepository, UserPreferenceRepository, SettingsBloc>(
+        update: (_, userRepository, userPreferenceRepository, __) =>
+            SettingsBloc(
           userRepository: userRepository,
+          userPreferenceRepository: userPreferenceRepository,
         ),
         child: Consumer<SettingsBloc>(
           builder: (_, bloc, __) => SettingsPage(
@@ -106,10 +110,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               SizedBox(
                                 width: 120,
                                 child: DropdownButton<String>(
-                                  value: currentTheme.getOrderBy() ==
-                                          OrderBy.ascending
-                                      ? orderByList[0]
-                                      : orderByList[1],
+                                  value: success.orderBy,
                                   icon: const Material(),
                                   elevation: 16,
                                   style: Theme.of(context).textTheme.labelSmall,
@@ -118,13 +119,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                     color: Colors.indigoAccent,
                                   ),
                                   onChanged: (String? value) {
-                                    if (value == orderByList[0]) {
-                                      currentTheme
-                                          .switchOrderBy(OrderBy.ascending);
-                                    } else if (value == orderByList[1]) {
-                                      currentTheme
-                                          .switchOrderBy(OrderBy.descending);
-                                    }
+                                    bloc.onOrderByChanged.add(
+                                      value ?? 'Descending',
+                                    );
                                   },
                                   items: orderByList
                                       .map<DropdownMenuItem<String>>(

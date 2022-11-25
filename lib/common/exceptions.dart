@@ -17,3 +17,5 @@ class UnauthenticatedUserException extends TaskListExceptions {}
 class TaskDoesntHaveStepsException extends TaskListExceptions {}
 
 class UserNeedsLoginException extends TaskListExceptions {}
+
+class AlreadyHasTaskException extends TaskListExceptions {}

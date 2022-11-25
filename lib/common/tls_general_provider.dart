@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/data/cache/data_source/user_preference_cds.dart';
 import 'package:flutter_task_list/data/data_observables.dart';
 import 'package:flutter_task_list/data/login_state_handler.dart';
 import 'package:flutter_task_list/data/remote/data_source/step_rds.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_task_list/data/remote/data_source/task_rds.dart';
 import 'package:flutter_task_list/data/remote/data_source/user_rds.dart';
 import 'package:flutter_task_list/data/repository/step_repository.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
+import 'package:flutter_task_list/data/repository/user_preference_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -41,6 +43,7 @@ class _TslGeneralProviderState extends State<TslGeneralProvider> {
           ...changeNotifiersProviders(),
           ...firebaseProviders(),
           ...rdsProviders(),
+          ...cdsProvider(),
           ...repositoryProviders(),
         ],
         child: widget.child,
@@ -80,6 +83,12 @@ class _TslGeneralProviderState extends State<TslGeneralProvider> {
         ),
       ];
 
+  List<SingleChildWidget> cdsProvider() => [
+        Provider<UserPreferenceCDS>(
+          create: (_) => UserPreferenceCDS(),
+        ),
+      ];
+
   List<SingleChildWidget> repositoryProviders() => [
         ProxyProvider<UserRds, UserRepository>(
           update: (_, userRds, __) => UserRepository(
@@ -93,6 +102,10 @@ class _TslGeneralProviderState extends State<TslGeneralProvider> {
         ),
         ProxyProvider<StepRds, StepRepository>(
           update: (_, stepRds, __) => StepRepository(stepRds: stepRds),
+        ),
+        ProxyProvider<UserPreferenceCDS, UserPreferenceRepository>(
+          update: (_, userPreferenceCDS, __) =>
+              UserPreferenceRepository(userPreferenceCDS: userPreferenceCDS),
         ),
       ];
 

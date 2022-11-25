@@ -6,6 +6,14 @@ class UserInfoChangeSuccessAction extends SettingsAction {}
 
 class UserInfoChangeFailAction extends SettingsAction {}
 
+class OrderByChangeFailAction extends SettingsAction {}
+
+class OrderByChangeSuccessAction extends SettingsAction {}
+
+class ThemePreferenceChangeFailAction extends SettingsAction {}
+
+class ThemePreferenceChangeSuccessAction extends SettingsAction {}
+
 abstract class SettingsState {}
 
 class Loading implements SettingsState {}
@@ -13,9 +21,11 @@ class Loading implements SettingsState {}
 class Success implements SettingsState {
   Success({
     required this.user,
+    required this.orderBy,
   });
 
   final UserSettingsData user;
+  final String orderBy;
 }
 
 class Error implements SettingsState {}

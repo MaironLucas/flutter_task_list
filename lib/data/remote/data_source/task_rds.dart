@@ -13,6 +13,7 @@ class TaskRds {
 
   static const String _taskName = "name";
   static const String _taskDescription = "description";
+  static const String _ownerKey = 'ownerId';
 
   Future<void> createTask(
       String userId, String name, String description) async {
@@ -57,6 +58,19 @@ class TaskRds {
       return snapshot.toTaskSummaryDM();
     } else {
       throw Exception();
+    }
+  }
+
+  Future<void> acceptTaskInvite(
+      String userId, String ownerId, String taskId) async {
+    final newRef = database.child('$userId/shared-tasks/$taskId');
+    final snapshot = await newRef.get();
+    if (snapshot.exists || userId == ownerId) {
+      throw AlreadyHasTaskException();
+    } else {
+      await newRef.update({
+        _ownerKey: ownerId,
+      });
     }
   }
 }
