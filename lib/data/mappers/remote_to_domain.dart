@@ -1,4 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_task_list/data/model/character.dart';
 import 'package:flutter_task_list/data/model/step.dart';
 import 'package:flutter_task_list/data/model/task_summary.dart';
 import 'package:flutter_task_list/views/common/view_utils.dart';

@@ -3,6 +3,7 @@ import 'package:flutter_task_list/config.dart';
 import 'package:flutter_task_list/data/data_observables.dart';
 import 'package:flutter_task_list/data/model/task_summary.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
+import 'package:flutter_task_list/data/repository/user_preference_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/async_snapshot_response_view.dart';
@@ -24,12 +25,17 @@ class TaskListPage extends StatelessWidget {
   final TaskListBloc bloc;
   final GlobalKey navigatorKey;
 
-  static Widget create(GlobalKey navigatorKey) => ProxyProvider3<TaskRepository,
-          UserRepository, TaskListUpdateStreamWrapper, TaskListBloc>(
-        update: (_, taskRepository, userRepository, taskListUpdateStreamWrapper,
-                __) =>
+  static Widget create(GlobalKey navigatorKey) => ProxyProvider4<
+          TaskRepository,
+          UserRepository,
+          UserPreferenceRepository,
+          TaskListUpdateStreamWrapper,
+          TaskListBloc>(
+        update: (_, taskRepository, userRepository, userPreferenceRepository,
+                taskListUpdateStreamWrapper, __) =>
             TaskListBloc(
           userRepository: userRepository,
+          userPreferenceRepository: userPreferenceRepository,
           taskRepository: taskRepository,
           taskListUpdateStream: taskListUpdateStreamWrapper.value,
         ),

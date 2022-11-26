@@ -1,9 +1,10 @@
 import 'package:flutter_task_list/common/exceptions.dart';
 import 'package:flutter_task_list/common/subscription_holder.dart';
-import 'package:flutter_task_list/config.dart';
 import 'package:flutter_task_list/data/model/task_summary.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
+import 'package:flutter_task_list/data/repository/user_preference_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
+import 'package:flutter_task_list/views/common/view_utils.dart';
 import 'package:flutter_task_list/views/task/list/task_list_models.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -11,6 +12,7 @@ class TaskListBloc with SubscriptionHolder {
   TaskListBloc({
     required this.taskRepository,
     required this.userRepository,
+    required this.userPreferenceRepository,
     required this.taskListUpdateStream,
   }) {
     Rx.merge<void>([
@@ -42,6 +44,7 @@ class TaskListBloc with SubscriptionHolder {
 
   final TaskRepository taskRepository;
   final UserRepository userRepository;
+  final UserPreferenceRepository userPreferenceRepository;
   final Stream<void> taskListUpdateStream;
 
   final _onNewStateSubject = BehaviorSubject<TaskListState>();
@@ -63,7 +66,9 @@ class TaskListBloc with SubscriptionHolder {
   Sink<void> get onTryAgain => _onTryAgainSubject.sink;
 
   Stream<TaskListState> _fetchTaskList() async* {
-    final orderBy = currentTheme.getOrderBy();
+    final orderBy = await userPreferenceRepository.getOrderBy() == 'Ascending'
+        ? OrderBy.ascending
+        : OrderBy.descending;
     yield Loading();
     try {
       var taskList = await taskRepository.getTasks(

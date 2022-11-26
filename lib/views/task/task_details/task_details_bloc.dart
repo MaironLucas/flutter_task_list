@@ -3,7 +3,9 @@ import 'package:flutter_task_list/config.dart';
 import 'package:flutter_task_list/data/model/task.dart';
 import 'package:flutter_task_list/data/repository/step_repository.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
+import 'package:flutter_task_list/data/repository/user_preference_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
+import 'package:flutter_task_list/views/common/view_utils.dart';
 import 'package:flutter_task_list/views/task/task_details/task_details_models.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -12,6 +14,7 @@ class TaskDetailsBloc with SubscriptionHolder {
     required this.stepRepository,
     required this.taskRepository,
     required this.userRepository,
+    required this.userPreferenceRepository,
     required this.taskId,
   }) {
     Rx.merge<void>([
@@ -48,6 +51,7 @@ class TaskDetailsBloc with SubscriptionHolder {
   final StepRepository stepRepository;
   final TaskRepository taskRepository;
   final UserRepository userRepository;
+  final UserPreferenceRepository userPreferenceRepository;
   final String taskId;
 
   final _onNewStateSubject = BehaviorSubject<TaskDetailsState>();
@@ -76,7 +80,9 @@ class TaskDetailsBloc with SubscriptionHolder {
     try {
       final user = userRepository.getUser();
       final taskSummary = await taskRepository.getTaskSummary(user.uid, taskId);
-      final orderBy = currentTheme.getOrderBy();
+      final orderBy = await userPreferenceRepository.getOrderBy() == 'Ascending'
+          ? OrderBy.ascending
+          : OrderBy.descending;
       try {
         final stepList = await stepRepository.getStepList(
           user.uid,

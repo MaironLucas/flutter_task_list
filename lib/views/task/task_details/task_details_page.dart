@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_task_list/data/repository/step_repository.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
+import 'package:flutter_task_list/data/repository/user_preference_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/async_snapshot_response_view.dart';
@@ -24,13 +25,19 @@ class TaskPage extends StatefulWidget {
   final TaskDetailsBloc bloc;
   final String taskName;
 
-  static Widget create(String taskId, String taskName) => ProxyProvider3<
-          StepRepository, TaskRepository, UserRepository, TaskDetailsBloc>(
-        update: (_, stepRepository, taskRepository, userRepository, __) =>
+  static Widget create(String taskId, String taskName) => ProxyProvider4<
+          StepRepository,
+          TaskRepository,
+          UserRepository,
+          UserPreferenceRepository,
+          TaskDetailsBloc>(
+        update: (_, stepRepository, taskRepository, userRepository,
+                userPreferenceRepository, __) =>
             TaskDetailsBloc(
           stepRepository: stepRepository,
           taskRepository: taskRepository,
           userRepository: userRepository,
+          userPreferenceRepository: userPreferenceRepository,
           taskId: taskId,
         ),
         dispose: (_, bloc) => bloc.dispose(),
