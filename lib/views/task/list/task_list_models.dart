@@ -7,9 +7,11 @@ class Loading implements TaskListState {}
 class Success implements TaskListState {
   Success({
     required this.taskList,
+    required this.userId,
   });
 
   final List<TaskSummary> taskList;
+  final String userId;
 }
 
 class Error implements TaskListState {}
@@ -37,3 +39,5 @@ class TaskInput {
   final String name;
   final String description;
 }
+
+enum TaskListOperation { share, edit, create }

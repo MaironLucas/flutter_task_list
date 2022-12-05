@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_task_list/config.dart';
 import 'package:flutter_task_list/data/data_observables.dart';
 import 'package:flutter_task_list/data/model/task_summary.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
@@ -9,11 +8,14 @@ import 'package:flutter_task_list/views/common/action_handler.dart';
 import 'package:flutter_task_list/views/common/async_snapshot_response_view.dart';
 import 'package:flutter_task_list/views/common/empty_state.dart';
 import 'package:flutter_task_list/views/common/view_utils.dart';
+import 'package:flutter_task_list/views/task/list/modal/share_task_modal.dart';
+import 'package:flutter_task_list/views/task/share/share_task.dart';
 import 'package:flutter_task_list/views/task/task_details/task_details_page.dart';
 import 'package:flutter_task_list/views/task/list/task_list_bloc.dart';
 import 'package:flutter_task_list/views/task/list/task_list_models.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import 'modal/create_task_modal.dart';
 import 'modal/edit_task_modal.dart';
@@ -47,23 +49,37 @@ class TaskListPage extends StatelessWidget {
         ),
       );
 
-  void openModalTask(int op, BuildContext context, {TaskSummary? task}) {
+  void openModalTask(TaskListOperation op, BuildContext context,
+      {TaskSummary? task, String? userId}) {
+    late Widget modalOperation;
+    switch (op) {
+      case TaskListOperation.create:
+        modalOperation = CreateTaskModal(
+          onCreateTaskTap: (TaskInput input) {
+            bloc.onCreateTaskTap.add(input);
+          },
+        );
+        break;
+      case TaskListOperation.edit:
+        modalOperation = EditTaskModal(
+          onEditTaskTap: (TaskSummary task) {
+            bloc.onEditTaskTap.add(task);
+          },
+          task: task!,
+        );
+        break;
+      case TaskListOperation.share:
+        modalOperation = ShareTaskModal(
+          taskId: task!.id,
+          userId: userId!,
+        );
+        break;
+    }
     showDialog(
       context: context,
       builder: (context) {
         return Dialog(
-          child: op == 0
-              ? CreateTaskModal(
-                  onCreateTaskTap: (TaskInput input) {
-                    bloc.onCreateTaskTap.add(input);
-                  },
-                )
-              : EditTaskModal(
-                  onEditTaskTap: (TaskSummary task) {
-                    bloc.onEditTaskTap.add(task);
-                  },
-                  task: task!,
-                ),
+          child: modalOperation,
         );
       },
     );
@@ -109,9 +125,23 @@ class TaskListPage extends StatelessWidget {
                             "Tasks",
                             style: Theme.of(context).textTheme.headlineSmall,
                           ),
+                          actions: [
+                            IconButton(
+                              onPressed: () => ShareTask.show(
+                                context: context,
+                                format: BarcodeFormat.qrcode,
+                              ),
+                              icon: const Icon(
+                                Icons.camera_alt,
+                              ),
+                            ),
+                          ],
                         ),
                         floatingActionButton: FloatingActionButton(
-                          onPressed: () => openModalTask(0, context),
+                          onPressed: () => openModalTask(
+                            TaskListOperation.create,
+                            context,
+                          ),
                           backgroundColor: Colors.indigoAccent,
                           child: const Icon(
                             Icons.add,
@@ -139,7 +169,19 @@ class TaskListPage extends StatelessWidget {
                                       children: [
                                         SlidableAction(
                                           onPressed: (context) => openModalTask(
-                                            1,
+                                            TaskListOperation.share,
+                                            context,
+                                            task: item,
+                                            userId: success.userId,
+                                          ),
+                                          backgroundColor: Colors.green,
+                                          foregroundColor: Colors.white,
+                                          icon: Icons.share,
+                                          label: 'Share',
+                                        ),
+                                        SlidableAction(
+                                          onPressed: (context) => openModalTask(
+                                            TaskListOperation.edit,
                                             context,
                                             task: item,
                                           ),

@@ -71,14 +71,15 @@ class TaskListBloc with SubscriptionHolder {
         : OrderBy.descending;
     yield Loading();
     try {
+      final userId = userRepository.getUser().uid;
       var taskList = await taskRepository.getTasks(
-        userRepository.getUser().uid,
+        userId,
         orderBy,
       );
-      yield Success(taskList: taskList);
+      yield Success(taskList: taskList, userId: userId);
     } catch (error) {
       if (error is UserDoesntHaveTaskException) {
-        yield Success(taskList: []);
+        yield Success(taskList: [], userId: '');
       } else {
         yield Error();
       }
