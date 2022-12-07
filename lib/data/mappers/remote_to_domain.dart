@@ -1,5 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter_task_list/data/model/character.dart';
+import 'package:flutter_task_list/data/model/shared_task.dart';
 import 'package:flutter_task_list/data/model/step.dart';
 import 'package:flutter_task_list/data/model/task_summary.dart';
 import 'package:flutter_task_list/views/common/view_utils.dart';
@@ -25,11 +25,12 @@ extension TaskSummaryListRMtoDM on DataSnapshot {
 }
 
 extension TaskSummaryRMtoDM on DataSnapshot {
-  TaskSummary toTaskSummaryDM() {
+  TaskSummary toTaskSummaryDM(String taskId) {
+    final map = value as Map;
     return TaskSummary(
-      id: '',
-      name: '',
-      description: '',
+      id: taskId,
+      name: map['name'],
+      description: map['description'],
     );
   }
 }
@@ -51,5 +52,21 @@ extension StepListRMtoDM on DataSnapshot {
         ? (a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase())
         : (a, b) => b.title.toLowerCase().compareTo(a.title.toLowerCase()));
     return stepList;
+  }
+}
+
+extension SharedTaskRMtoDM on DataSnapshot {
+  List<SharedTask> toSharedTaskList() {
+    var sharedTaskList = <SharedTask>[];
+    final map = value as Map<dynamic, dynamic>;
+    map.forEach(
+      (taskId, value) => sharedTaskList.add(
+        SharedTask(
+          userId: value['ownerId'],
+          taskId: taskId,
+        ),
+      ),
+    );
+    return sharedTaskList;
   }
 }

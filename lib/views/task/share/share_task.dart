@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/views/task/list/task_list_models.dart';
+import 'package:focus_detector/focus_detector.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class ShareTask extends StatefulWidget {
@@ -15,7 +18,7 @@ class ShareTask extends StatefulWidget {
   @override
   State<ShareTask> createState() => _ShareTaskState();
 
-  static Future<String?> show({
+  static Future<QRCodeScanResult?> show({
     required BuildContext context,
     required BarcodeFormat format,
   }) async =>
@@ -23,7 +26,19 @@ class ShareTask extends StatefulWidget {
         MaterialPageRoute(
           builder: (ctx) => ShareTask(
             format: format,
-            onScan: (scan) => Navigator.of(ctx).pop(scan),
+            onScan: (scan) {
+              QRCodeScanResult? qrResult;
+              try {
+                final parsedJson = json.decode(scan!);
+                qrResult = QRCodeScanResult(
+                  userId: parsedJson['userId'],
+                  taskId: parsedJson['taskId'],
+                );
+                Navigator.of(ctx).pop<QRCodeScanResult>(qrResult);
+              } catch (e) {
+                Navigator.of(context).pop(null);
+              }
+            },
           ),
         ),
       );
@@ -45,30 +60,33 @@ class _ShareTaskState extends State<ShareTask> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            flex: 5,
-            child: QRView(
-              key: qrKey,
-              onQRViewCreated: _onQRViewCreated,
-            ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: () => widget.onScan(null),
-                child: const Text("Cancelar"),
+    return FocusDetector(
+      onFocusGained: () => controller!.resumeCamera(),
+      child: Scaffold(
+        body: Column(
+          children: <Widget>[
+            Expanded(
+              flex: 5,
+              child: QRView(
+                key: qrKey,
+                onQRViewCreated: _onQRViewCreated,
               ),
             ),
-          )
-        ],
+            Expanded(
+              flex: 1,
+              child: Center(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () => widget.onScan(null),
+                  child: const Text("Cancelar"),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

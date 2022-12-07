@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_task_list/common/exceptions.dart';
 import 'package:flutter_task_list/data/mappers/remote_to_domain.dart';
+import 'package:flutter_task_list/data/model/shared_task.dart';
 import 'package:flutter_task_list/data/model/task_summary.dart';
 import 'package:flutter_task_list/views/common/view_utils.dart';
 
@@ -41,21 +42,49 @@ class TaskRds {
     newRef.child(taskId).remove();
   }
 
+  Future<List<SharedTask>> getSharedTaskList(String userId) async {
+    //Fetch tasks that is shared with user
+    final refShared = database.child('$userId/shared-tasks');
+    final snapshotShared = await refShared.get();
+    if (snapshotShared.exists) {
+      return snapshotShared.toSharedTaskList();
+    }
+    return [];
+  }
+
   Future<List<TaskSummary>> getTasks(String userId, OrderBy orderBy) async {
     final newRef = database.child('$userId/tasks');
     final snapshot = await newRef.get();
+    var userTasks = <TaskSummary>[];
+    var sharedTasks = <TaskSummary>[];
+
+    //Fetch tasks that user created
     if (snapshot.exists) {
-      return snapshot.toTaskList(orderBy);
-    } else {
+      userTasks = snapshot.toTaskList(orderBy);
+    }
+
+    final sharedTasksIds = await getSharedTaskList(userId);
+    for (var sharedTask in sharedTasksIds) {
+      sharedTasks.add(
+        await getTaskSummary(sharedTask.userId, sharedTask.taskId),
+      );
+    }
+
+    final taskSummaryList = [
+      ...userTasks,
+      ...sharedTasks,
+    ];
+    if (taskSummaryList.isEmpty) {
       throw UserDoesntHaveTaskException();
     }
+    return taskSummaryList;
   }
 
   Future<TaskSummary> getTaskSummary(String userId, String taskId) async {
     final newRef = database.child('$userId/tasks/$taskId');
     final snapshot = await newRef.get();
     if (snapshot.exists) {
-      return snapshot.toTaskSummaryDM();
+      return snapshot.toTaskSummaryDM(taskId);
     } else {
       throw Exception();
     }

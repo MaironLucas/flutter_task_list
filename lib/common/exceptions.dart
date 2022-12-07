@@ -21,3 +21,5 @@ class UserNeedsLoginException extends TaskListExceptions {}
 class AlreadyHasTaskException extends TaskListExceptions {}
 
 class ObjectNotFoundException extends TaskListExceptions {}
+
+class CantDeleteTaskThatIsntYoursException extends TaskListExceptions {}

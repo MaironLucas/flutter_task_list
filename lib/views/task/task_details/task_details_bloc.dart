@@ -1,5 +1,4 @@
 import 'package:flutter_task_list/common/subscription_holder.dart';
-import 'package:flutter_task_list/config.dart';
 import 'package:flutter_task_list/data/model/task.dart';
 import 'package:flutter_task_list/data/repository/step_repository.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
@@ -63,8 +62,8 @@ class TaskDetailsBloc with SubscriptionHolder {
   final _onEditStepTapSubject = PublishSubject<EditStepInput>();
   Sink<EditStepInput> get onEditStepTap => _onEditStepTapSubject.sink;
 
-  final _onDeleteStepTapSubject = PublishSubject<String>();
-  Sink<String> get onDeleteStep => _onDeleteStepTapSubject.sink;
+  final _onDeleteStepTapSubject = PublishSubject<DeleteStepInput>();
+  Sink<DeleteStepInput> get onDeleteStep => _onDeleteStepTapSubject.sink;
 
   final _onCompleteStepTapSubject = PublishSubject<CompleteStepInput>();
   Sink<CompleteStepInput> get onCompleteStep => _onCompleteStepTapSubject.sink;
@@ -79,13 +78,22 @@ class TaskDetailsBloc with SubscriptionHolder {
     yield Loading();
     try {
       final user = userRepository.getUser();
-      final taskSummary = await taskRepository.getTaskSummary(user.uid, taskId);
+      final sharedTaskIds = await taskRepository.isSharedTask(taskId, user.uid);
+      late String userId;
+      if (sharedTaskIds != null) {
+        userId = sharedTaskIds.userId;
+      } else {
+        userId = user.uid;
+      }
+
       final orderBy = await userPreferenceRepository.getOrderBy() == 'Ascending'
           ? OrderBy.ascending
           : OrderBy.descending;
+      final taskSummary = await taskRepository.getTaskSummary(userId, taskId);
+
       try {
         final stepList = await stepRepository.getStepList(
-          user.uid,
+          userId,
           taskId,
           orderBy,
         );
@@ -96,6 +104,7 @@ class TaskDetailsBloc with SubscriptionHolder {
             description: taskSummary.description,
             steps: stepList,
           ),
+          ownerId: userId,
         );
       } catch (e) {
         yield Success(
@@ -105,6 +114,7 @@ class TaskDetailsBloc with SubscriptionHolder {
             description: taskSummary.description,
             steps: [],
           ),
+          ownerId: userId,
         );
       }
     } catch (error) {
@@ -114,8 +124,16 @@ class TaskDetailsBloc with SubscriptionHolder {
 
   Stream<TaskDetailAction> _createStep(CreateStepInput stepInput) async* {
     try {
+      final user = userRepository.getUser();
+      final sharedTaskIds = await taskRepository.isSharedTask(taskId, user.uid);
+      late String userId;
+      if (sharedTaskIds != null) {
+        userId = sharedTaskIds.userId;
+      } else {
+        userId = user.uid;
+      }
       await stepRepository.addStep(
-        userRepository.getUser().uid,
+        userId,
         taskId,
         stepInput.name,
       );
@@ -129,7 +147,7 @@ class TaskDetailsBloc with SubscriptionHolder {
   Stream<TaskDetailAction> _completeStep(CompleteStepInput input) async* {
     try {
       await stepRepository.updateStepState(
-        userRepository.getUser().uid,
+        input.ownerId,
         taskId,
         input.id,
         input.state,
@@ -144,7 +162,7 @@ class TaskDetailsBloc with SubscriptionHolder {
   Stream<TaskDetailAction> _editStep(EditStepInput input) async* {
     try {
       await stepRepository.updateStepName(
-        userRepository.getUser().uid,
+        input.ownerId,
         taskId,
         input.id,
         input.name,
@@ -156,10 +174,13 @@ class TaskDetailsBloc with SubscriptionHolder {
     }
   }
 
-  Stream<TaskDetailAction> _deleteStep(String stepId) async* {
+  Stream<TaskDetailAction> _deleteStep(DeleteStepInput input) async* {
     try {
       await stepRepository.removeStep(
-          userRepository.getUser().uid, taskId, stepId);
+        input.ownerId,
+        taskId,
+        input.id,
+      );
       yield SuccessOnDeleteStep();
       _onTryAgainSubject.add(null);
     } catch (e) {

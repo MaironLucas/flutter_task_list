@@ -102,6 +102,14 @@ class TaskListPage extends StatelessWidget {
           displaySnackBar(context, 'Task edited successfully!');
         } else if (action is FailOnEditTask) {
           displaySnackBar(context, 'Fail on edit Task!');
+        } else if (action is UserIsTaskOwnerAction) {
+          displaySnackBar(context, 'This Task is yours, cant accept invite!');
+        } else if (action is TaskAcceptInviteSuccess) {
+          displaySnackBar(context, 'Task has been added to your list!');
+        } else if (action is TaskAcceptInviteSuccess) {
+          displaySnackBar(context, 'Fail on accept task invite!');
+        } else if (action is CanotDeleteTaskThatIsntYours) {
+          displaySnackBar(context, 'You cant delete task that isnt yours!');
         }
       },
       child: Navigator(
@@ -130,7 +138,11 @@ class TaskListPage extends StatelessWidget {
                               onPressed: () => ShareTask.show(
                                 context: context,
                                 format: BarcodeFormat.qrcode,
-                              ),
+                              ).then((qrCodeResult) {
+                                if (qrCodeResult != null) {
+                                  bloc.onNewTaskInvite.add(qrCodeResult);
+                                }
+                              }),
                               icon: const Icon(
                                 Icons.camera_alt,
                               ),

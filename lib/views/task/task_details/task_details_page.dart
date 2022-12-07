@@ -59,8 +59,13 @@ class _TaskPageState extends State<TaskPage> {
 
   TaskDetailsBloc get bloc => widget.bloc;
 
-  void openModalItem(int op, String? title, BuildContext context,
-      {String? stepId}) {
+  void openModalItem(
+    int op,
+    String? title,
+    BuildContext context, {
+    String? stepId,
+    String? ownerId,
+  }) {
     showDialog(
       context: context,
       builder: (context) {
@@ -73,8 +78,13 @@ class _TaskPageState extends State<TaskPage> {
                 )
               : EditItemModal(
                   onEditItemTap: (String name) {
-                    bloc.onEditStepTap
-                        .add(EditStepInput(id: stepId!, name: name));
+                    bloc.onEditStepTap.add(
+                      EditStepInput(
+                        id: stepId!,
+                        name: name,
+                        ownerId: ownerId!,
+                      ),
+                    );
                   },
                   title: title!,
                 ),
@@ -117,7 +127,11 @@ class _TaskPageState extends State<TaskPage> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => openModalItem(0, '', context),
+          onPressed: () => openModalItem(
+            0,
+            '',
+            context,
+          ),
           backgroundColor: Colors.indigoAccent,
           child: const Icon(
             Icons.add,
@@ -147,6 +161,7 @@ class _TaskPageState extends State<TaskPage> {
                           CompleteStepInput(
                             id: item.id,
                             state: !item.isConcluded,
+                            ownerId: success.ownerId,
                           ),
                         ),
                         child: Slidable(
@@ -159,6 +174,7 @@ class _TaskPageState extends State<TaskPage> {
                                   CompleteStepInput(
                                     id: item.id,
                                     state: !item.isConcluded,
+                                    ownerId: success.ownerId,
                                   ),
                                 ),
                                 backgroundColor: Colors.green,
@@ -170,6 +186,7 @@ class _TaskPageState extends State<TaskPage> {
                                   1,
                                   item.title,
                                   context,
+                                  ownerId: success.ownerId,
                                   stepId: item.id,
                                 ),
                                 backgroundColor: Colors.indigo,
@@ -177,8 +194,12 @@ class _TaskPageState extends State<TaskPage> {
                                 icon: Icons.edit,
                               ),
                               SlidableAction(
-                                onPressed: (_) =>
-                                    bloc.onDeleteStep.add(item.id),
+                                onPressed: (_) => bloc.onDeleteStep.add(
+                                  DeleteStepInput(
+                                    id: item.id,
+                                    ownerId: success.ownerId,
+                                  ),
+                                ),
                                 backgroundColor: Colors.red,
                                 foregroundColor: Colors.white,
                                 icon: Icons.delete,

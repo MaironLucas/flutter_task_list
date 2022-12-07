@@ -30,6 +30,14 @@ class SuccessOnDeleteTask implements TaskListAction {}
 
 class FailOnDeleteTask implements TaskListAction {}
 
+class UserIsTaskOwnerAction implements TaskListAction {}
+
+class TaskAcceptInviteSuccess implements TaskListAction {}
+
+class TaskAcceptInviteFail implements TaskListAction {}
+
+class CanotDeleteTaskThatIsntYours implements TaskListAction {}
+
 class TaskInput {
   TaskInput({
     required this.name,
@@ -41,3 +49,13 @@ class TaskInput {
 }
 
 enum TaskListOperation { share, edit, create }
+
+class QRCodeScanResult {
+  QRCodeScanResult({
+    required this.userId,
+    required this.taskId,
+  });
+
+  final String userId;
+  final String taskId;
+}

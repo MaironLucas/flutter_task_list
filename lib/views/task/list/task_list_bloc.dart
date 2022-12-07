@@ -40,6 +40,11 @@ class TaskListBloc with SubscriptionHolder {
         .flatMap(_createTask)
         .listen(_onNewActionSubject.add)
         .addTo(subscriptions);
+
+    _onNewTaskInviteSubject
+        .flatMap(_acceptTaskInvite)
+        .listen(_onNewActionSubject.add)
+        .addTo(subscriptions);
   }
 
   final TaskRepository taskRepository;
@@ -61,6 +66,9 @@ class TaskListBloc with SubscriptionHolder {
 
   final _onCreateTaskTapSubject = PublishSubject<TaskInput>();
   Sink<TaskInput> get onCreateTaskTap => _onCreateTaskTapSubject.sink;
+
+  final _onNewTaskInviteSubject = PublishSubject<QRCodeScanResult>();
+  Sink<QRCodeScanResult> get onNewTaskInvite => _onNewTaskInviteSubject.sink;
 
   final _onTryAgainSubject = PublishSubject<void>();
   Sink<void> get onTryAgain => _onTryAgainSubject.sink;
@@ -102,7 +110,11 @@ class TaskListBloc with SubscriptionHolder {
       yield SuccessOnDeleteTask();
       _onTryAgainSubject.add(null);
     } catch (e) {
-      yield FailOnDeleteTask();
+      if (e is CantDeleteTaskThatIsntYoursException) {
+        yield CanotDeleteTaskThatIsntYours();
+      } else {
+        yield FailOnDeleteTask();
+      }
     }
   }
 
@@ -123,5 +135,24 @@ class TaskListBloc with SubscriptionHolder {
     _onDeleteTaskTapSubject.close();
     _onEditTaskTapSubject.close();
     disposeAll();
+  }
+
+  Stream<TaskListAction> _acceptTaskInvite(QRCodeScanResult qrCode) async* {
+    final user = userRepository.getUser();
+    if (user.uid == qrCode.userId) {
+      yield UserIsTaskOwnerAction();
+    } else {
+      try {
+        await taskRepository.acceptTaskInvite(
+          user.uid,
+          qrCode.userId,
+          qrCode.taskId,
+        );
+        _onTryAgainSubject.add(null);
+        yield TaskAcceptInviteSuccess();
+      } catch (e) {
+        yield TaskAcceptInviteFail();
+      }
+    }
   }
 }
