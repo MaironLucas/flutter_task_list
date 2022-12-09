@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/data/repository/character_repository.dart';
 import 'package:flutter_task_list/data/repository/user_preference_repository.dart';
 import 'package:flutter_task_list/data/repository/user_repository.dart';
 import 'package:flutter_task_list/views/auth/auth_view.dart';
@@ -19,11 +20,13 @@ class SettingsPage extends StatefulWidget {
 
   final SettingsBloc bloc;
 
-  static Widget create() =>
-      ProxyProvider2<UserRepository, UserPreferenceRepository, SettingsBloc>(
-        update: (_, userRepository, userPreferenceRepository, __) =>
+  static Widget create() => ProxyProvider3<UserRepository,
+          UserPreferenceRepository, CharacterRepository, SettingsBloc>(
+        update: (_, userRepository, userPreferenceRepository,
+                characterRepository, __) =>
             SettingsBloc(
           userRepository: userRepository,
+          characterRepository: characterRepository,
           userPreferenceRepository: userPreferenceRepository,
         ),
         child: Consumer<SettingsBloc>(
@@ -73,7 +76,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             floatingActionButton: FloatingActionButton(
-                backgroundColor: Colors.indigoAccent,
+                backgroundColor: Colors.blue,
                 onPressed: () => _onFabPress(user.name),
                 child: const Icon(
                   Icons.edit,
@@ -97,7 +100,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 children: const [
                                   Icon(
                                     Icons.import_export,
-                                    color: Colors.indigoAccent,
+                                    color: Colors.blue,
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(left: 8.0),
@@ -116,7 +119,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   style: Theme.of(context).textTheme.labelSmall,
                                   underline: Container(
                                     height: 1,
-                                    color: Colors.indigoAccent,
+                                    color: Colors.blue,
                                   ),
                                   onChanged: (String? value) {
                                     bloc.onOrderByChanged.add(
@@ -149,7 +152,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 children: const [
                                   Icon(
                                     Icons.wb_sunny,
-                                    color: Colors.indigoAccent,
+                                    color: Colors.blue,
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(left: 8.0),
@@ -168,7 +171,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   style: Theme.of(context).textTheme.labelSmall,
                                   underline: Container(
                                     height: 1,
-                                    color: Colors.indigoAccent,
+                                    color: Colors.blue,
                                   ),
                                   onChanged: (String? value) {
                                     currentTheme.switchTheme(value);
@@ -200,15 +203,26 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const CircleAvatar(
-                              radius: 80,
-                              backgroundImage: NetworkImage(
-                                  'https://picsum.photos/id/237/200/300')),
+                          CircleAvatar(
+                            radius: 80,
+                            backgroundImage: const AssetImage(
+                              'assets/placeholder.jpg',
+                            ),
+                            foregroundImage: NetworkImage(success.photoUrl),
+                          ),
                         ],
                       ),
                     ),
                     const SizedBox(
-                      height: 30,
+                      height: 15,
+                    ),
+                    Center(
+                      child: Text(
+                        'Are you ${success.nickname}?',
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
                     ),
                     SizedBox(
                       height: 50,

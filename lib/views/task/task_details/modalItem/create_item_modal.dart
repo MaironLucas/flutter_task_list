@@ -86,7 +86,7 @@ class _CreateItemModalState extends State<CreateItemModal> {
                             // buttonStatus is ButtonActive
                             //     ?
                             MaterialStateProperty.all<Color>(
-                          Colors.indigoAccent,
+                          Colors.blue,
                         )
                         // : MaterialStateProperty.all<Color>(
                         //     Colors.blueGrey,

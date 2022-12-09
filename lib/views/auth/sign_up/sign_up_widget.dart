@@ -208,7 +208,7 @@ class SignUpWidget extends StatelessWidget {
                                     backgroundColor:
                                         buttonStatus is ButtonActive
                                             ? MaterialStateProperty.all<Color>(
-                                                Colors.indigoAccent,
+                                                Colors.blue,
                                               )
                                             : MaterialStateProperty.all<Color>(
                                                 Colors.blueGrey,

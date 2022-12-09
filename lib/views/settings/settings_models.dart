@@ -22,10 +22,14 @@ class Success implements SettingsState {
   Success({
     required this.user,
     required this.orderBy,
+    required this.photoUrl,
+    required this.nickname,
   });
 
   final UserSettingsData user;
   final String orderBy;
+  final String photoUrl;
+  final String nickname;
 }
 
 class Error implements SettingsState {}

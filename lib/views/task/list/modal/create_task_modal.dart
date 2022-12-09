@@ -113,7 +113,7 @@ class _CreateTaskModalState extends State<CreateTaskModal> {
                           ),
                         ),
                         backgroundColor: MaterialStateProperty.all<Color>(
-                          Colors.indigoAccent,
+                          Colors.blue,
                         )),
                     child: const Text(
                       "Create",

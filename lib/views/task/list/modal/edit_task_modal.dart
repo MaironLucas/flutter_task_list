@@ -127,7 +127,7 @@ class _EditTaskModalState extends State<EditTaskModal> {
                             // buttonStatus is ButtonActive
                             //     ?
                             MaterialStateProperty.all<Color>(
-                          Colors.indigoAccent,
+                          Colors.blue,
                         )
                         // : MaterialStateProperty.all<Color>(
                         //     Colors.blueGrey,

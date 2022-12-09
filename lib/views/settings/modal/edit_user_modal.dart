@@ -221,7 +221,7 @@ class _EditUserModalState extends State<EditUserModal> {
                           ),
                           backgroundColor: buttonStatus is ButtonActive
                               ? MaterialStateProperty.all<Color>(
-                                  Colors.indigoAccent,
+                                  Colors.blue,
                                 )
                               : MaterialStateProperty.all<Color>(
                                   Colors.blueGrey,

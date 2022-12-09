@@ -19,7 +19,7 @@ class CharacterRDS {
   Future<List<Character>> getCharacterList() async {
     try {
       final json = await Dio().get('$baseUrl/all.json');
-      final result = (json.data as List<Map<String, dynamic>>)
+      final result = (json.data as List)
           .map<Character>(
             (characterJson) => Character.fromJson(characterJson),
           )

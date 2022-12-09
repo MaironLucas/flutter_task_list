@@ -200,7 +200,7 @@ class _SignInWidgetState extends State<SignInWidget> {
                                       backgroundColor: buttonStatus
                                               is ButtonActive
                                           ? MaterialStateProperty.all<Color>(
-                                              Colors.indigoAccent,
+                                              Colors.blue,
                                             )
                                           : MaterialStateProperty.all<Color>(
                                               Colors.blueGrey,

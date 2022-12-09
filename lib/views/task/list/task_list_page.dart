@@ -154,7 +154,7 @@ class TaskListPage extends StatelessWidget {
                             TaskListOperation.create,
                             context,
                           ),
-                          backgroundColor: Colors.indigoAccent,
+                          backgroundColor: Colors.blue,
                           child: const Icon(
                             Icons.add,
                             color: Color.fromRGBO(217, 217, 217, 1),

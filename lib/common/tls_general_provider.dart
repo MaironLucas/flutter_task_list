@@ -1,12 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_task_list/data/cache/data_source/character_cds.dart';
 import 'package:flutter_task_list/data/cache/data_source/user_preference_cds.dart';
 import 'package:flutter_task_list/data/data_observables.dart';
 import 'package:flutter_task_list/data/login_state_handler.dart';
+import 'package:flutter_task_list/data/remote/data_source/character_rds.dart';
 import 'package:flutter_task_list/data/remote/data_source/step_rds.dart';
 import 'package:flutter_task_list/data/remote/data_source/task_rds.dart';
 import 'package:flutter_task_list/data/remote/data_source/user_rds.dart';
+import 'package:flutter_task_list/data/repository/character_repository.dart';
 import 'package:flutter_task_list/data/repository/step_repository.dart';
 import 'package:flutter_task_list/data/repository/task_repository.dart';
 import 'package:flutter_task_list/data/repository/user_preference_repository.dart';
@@ -81,11 +84,17 @@ class _TslGeneralProviderState extends State<TslGeneralProvider> {
         ProxyProvider<DatabaseReference, StepRds>(
           update: (_, database, __) => StepRds(database: database),
         ),
+        Provider<CharacterRDS>(
+          create: (_) => CharacterRDS(),
+        ),
       ];
 
   List<SingleChildWidget> cdsProvider() => [
         Provider<UserPreferenceCDS>(
           create: (_) => UserPreferenceCDS(),
+        ),
+        Provider<CharacterCDS>(
+          create: (_) => CharacterCDS(),
         ),
       ];
 
@@ -106,6 +115,12 @@ class _TslGeneralProviderState extends State<TslGeneralProvider> {
         ProxyProvider<UserPreferenceCDS, UserPreferenceRepository>(
           update: (_, userPreferenceCDS, __) =>
               UserPreferenceRepository(userPreferenceCDS: userPreferenceCDS),
+        ),
+        ProxyProvider2<CharacterCDS, CharacterRDS, CharacterRepository>(
+          update: (_, characterCDS, characterRDS, __) => CharacterRepository(
+            characterRDS: characterRDS,
+            characterCDS: characterCDS,
+          ),
         ),
       ];
 

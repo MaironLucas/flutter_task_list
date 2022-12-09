@@ -19,10 +19,12 @@ class CharacterRepository {
       return characterCM.toDM();
     } catch (e) {
       await characterRDS.getCharacterList().then(
-            (characterList) => characterCDS.upsertCharacterList(
-              characterList.map((character) => character.toCM()).toList(),
-            ),
+        (characterList) {
+          characterCDS.upsertCharacterList(
+            characterList.map((character) => character.toCM()).toList(),
           );
+        },
+      );
       final characterCM = await characterCDS.getCharacterById(id);
       return characterCM.toDM();
     }
