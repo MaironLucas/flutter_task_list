@@ -22,9 +22,11 @@ O App será uma ferramenta para criação e compartilhamento de listas de tarefa
 
 ## O que foi implementado nesse envio?
 
-Nesse envio, implementamos as telas que faltaram no primeiro envio: a home com a lista de tarefas, os detalhes de uma tarefa específica e a tela de configurações. Implementamos o login utilizando o FirebaseAuth e, para o armazenamento de tarefas e passos para cumpri-la, utilizados o Realtime Database. Como funcionalidades faltantes, para a próxima entrega pretendemos transformar a tela de configurações em um modal que vem da direita para a esquerda e também uma tela onde terá as informações do usuário, assim como a opção de definir uma fotografia (aqui implementaremos o uso de API). Além disso, vamos melhorar a tela de listagem de tarefas e de passos no quesito visual. Também iremos trazer a funcionalidade de deixar o botão indisponivel quando um campo obrigatório não é preenchido em todos os dialogs do app, pois não houve tempo de fazer para essa entrega.
-Quanto a bugs, a ordenação dos itens não está funcionando completamente, a seleção do usuário se perde em caso de rebuild, por isso na próxima entrega guardaremos essa escolha num bando de dados local (Hive). O dialog de edição dos dados do usuário não está fechando, não consegui descobrir a razão disso ainda.
+Nesse envio, alteramos a cor principal dos botões e alguns itens, como sugerido pelo professor no último envio. Além disso, tornamos as preferências do usuário (tema e ordenação da lista) atributos salvos no cache através do Hive. 
+
+Com relação à implementação de recurso nativo, implementamos a possibilidade do usuário compartilhar sua Task com outros através de um QR Code que pode ser scanneado pelo recurso de câmera também disponível no app (adicionando assim a respectiva Task a lista de Tasks do usuário que leu o QR Code).
+
+Com relação a API, utilizamos a API disponível em https://github.com/akabab/starwars-api. Através dessa API, toda vez que o usuário acessa a página de configurações ele terá a foto de um personagem diferente da saga Star Wars, assim como o nome desse personagem como "apelido". A lista de personagens é obtida uma única vez e armazenada em uma box do Hive, tornando assim o acesso a essas informações mais rápido.
 
 ## Como as atividades foram divididas?
-Alan e Tiago trabalharam na parte visual, criando os conceitos das telas e desenvolvendo isso no Flutter;
-Mairon fez a integração do App com o Firebase, assim como a gestão dos estados do app;
+O grupo fez as implementações em conjunto.
