@@ -196,6 +196,21 @@ class _SettingsPageState extends State<SettingsPage> {
                       color: Colors.grey,
                     ),
                     SizedBox(
+                      height: 150,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const CircleAvatar(
+                              radius: 80,
+                              backgroundImage: NetworkImage(
+                                  'https://picsum.photos/id/237/200/300')),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    SizedBox(
                       height: 50,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
